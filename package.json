@@ -1,7 +1,7 @@
 {
   "name": "hubgit",
   "version": "0.0.0",
-  "description": "UI & API for BigDatr.com",
+  "description": "Command line app for Github",
   "repository": {
     "type": "git",
     "url": "git@github.com:allanhortle/hubgit.git"
