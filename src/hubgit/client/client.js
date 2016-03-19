@@ -16,6 +16,7 @@ import {render} from 'react-blessed';
 const screen = blessed.screen({
   autoPadding: true,
   smartCSR: true,
+  dockBorders: true,
   title: 'react-blessed hello world'
 });
 
