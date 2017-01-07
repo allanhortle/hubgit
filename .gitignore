@@ -4,7 +4,7 @@ stats.json
 node_modules/
 .env
 .sass-cache/
-
+lib
 *.orig
 *.mp4
 *.log
