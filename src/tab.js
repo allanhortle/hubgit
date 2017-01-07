@@ -5,6 +5,18 @@ import repositories from './page/repositories';
 import activity from './page/activity';
 import screen from './screen';
 
+
+function render(page) {
+    return () => {
+        var i = screen.children.length;
+        while (i--) screen.children[i].detach();
+
+        page(screen);
+        screen.append(tab);
+        screen.render();
+    }
+}
+
 const tab = Listbar({
     bottom: 0,
     width: '100%',
@@ -22,53 +34,19 @@ const tab = Listbar({
     },
     items: {
         issues: {
-            callback: renderIssue
+            callback: render(issue)
         },
         'pull-requests': {
-            callback: renderPullRequest
+            callback: render(pullRequest)
         },
         repositories: {
-            callback: renderRepositories
+            callback: render(repositories)
         },
         activity: {
-            callback: renderActivity
+            callback: render(activity)
         }
     }
 });
 
-function clearScreen() {
-    var i = screen.children.length;
-    while (i--) screen.children[i].detach();
-}
 
-function renderIssue() {
-    clearScreen();
-    issue(screen);
-    screen.append(tab);
-    screen.render();
-};
-
-function renderPullRequest() {
-    clearScreen();
-    pullRequest(screen);
-    screen.append(tab);
-    screen.render();
-}
-
-function renderRepositories() {
-    clearScreen();
-    repositories(screen);
-    screen.append(tab);
-    screen.render();
-}
-
-function renderActivity() {
-    clearScreen();
-    activity(screen);
-    screen.append(tab);
-    screen.render();
-}
-
-export default function(screen) {
-    screen.append(tab);
-}
+export default tab;

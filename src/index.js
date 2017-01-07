@@ -15,15 +15,27 @@ program.parse(process.argv);
 // repos
 // activity
 
-// switch (program.args[0]) {
-//     case 'start':
-//         Start(program, config);
-//         break;
+switch (program.args[0]) {
 
-//     default:
+    case 'repository':
+    case 'repo':
+    case 'repositories':
+        tab.selectTab(2)
+        break;
 
-//         break;
-// }
-//
-tab(screen);
-screen.render();
+    case 'activity':
+        tab.selectTab(3);
+        break;
+
+    case 'pr':
+    case 'pulls':
+    case 'pull':
+    case 'pullRequest':
+    case 'pullRequests':
+        tab.selectTab(1)
+        break;
+
+    default:
+        tab.selectTab(0);
+        break;
+}
