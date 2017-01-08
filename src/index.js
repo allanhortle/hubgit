@@ -1,21 +1,21 @@
+import commander from 'commander';
+
 import pkg from '../package.json';
-import program from 'commander';
 import screen from './screen';
 import tab from './tab';
+import App from './App';
 
-program
+commander
     .version(pkg.version)
     // .option('-l, --lurkles <items>', 'A list of config files to merge', val => val.split(','))
     // .option('-d, --dry', 'show commands without running them')
 
-program.parse(process.argv);
+commander.parse(process.argv);
 
-// issues
-// pr
-// repos
-// activity
 
-switch (program.args[0]) {
+
+
+switch (commander.args[0]) {
 
     case 'repository':
     case 'repo':

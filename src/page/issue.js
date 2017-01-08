@@ -1,27 +1,45 @@
 import blessed from 'blessed';
 import contrib from 'blessed-contrib';
 
+import loremIpsum from 'lorem-ipsum';
+import {Range} from 'immutable';
+
+const data = Range(0, 15)
+    .map(ii => {
+        return {
+            title: `#${ii}: ${loremIpsum()}`,
+            content: loremIpsum({
+                units: 'paragraphs'
+            })
+        }
+    })
+
 export default function(screen) {
-    var grid = new contrib.grid({rows: 4, cols: 4, screen: screen})
 
-    var line = grid.set(1, 0, 2, 2, contrib.line,
-      { style:
-        { line: "yellow"
-        , text: "green"
-        , baseline: "black"}
-      , xLabelPadding: 3
-      , xPadding: 5
-      , label: 'Stocks'})
+    var list = blessed.box({
+        height: '100%-1',
+        width: 50,
+        content: data.map(ii => ii.title).join('\n'),
+        // label: 'Issues',
+        // border: {
+        //     type: "line",
+        //     fg: "cyan"
+        // }
+    });
 
-    var map = grid.set(1, 2, 2, 2, contrib.map, {label: 'Servers Location'})
+    var content = blessed.box({
+        height: '100%-1',
+        width: '100%-50',
+        left: 50,
+        label: 'issue01',
+        content: '@My Box',
+        border: {
+            type: "line",
+            fg: "cyan"
+        }
+    });
 
-    var box = blessed.box({content: 'click right-left arrows or wait 3 seconds for the next layout in the carousel', top: '80%', left: '10%'})
-    screen.append(box);
+    screen.append(list);
+    screen.append(content);
 
-    var lineData = {
-       x: ['t1', 't2', 't3', 't4'],
-       y: [5, 1, 7, 5]
-    }
-
-   line.setData([lineData])
 }

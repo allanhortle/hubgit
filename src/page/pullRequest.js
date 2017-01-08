@@ -3,25 +3,15 @@ import contrib from 'blessed-contrib';
 
 
 export default function pullRequest(screen) {
-  var line = contrib.line(
-   { width: 80
-   , height: 30
-   , left: 15
-   , top: 12
-   , xPadding: 5
-   , label: 'Title'
-   })
+    var content = blessed.box({
+        height: '100%-1',
+        width: '100%',
+        label: 'Pull Rqquests',
+        border: {
+            type: "line",
+            fg: "cyan"
+        }
+    });
 
-  var data = [ { title: 'us-east',
-             x: ['t1', 't2', 't3', 't4'],
-             y: [0, 0.0695652173913043, 0.11304347826087, 2],
-             style: {
-              line: 'red'
-             }
-           }
-        ]
-
-  screen.append(line)
-  line.setData(data)
-
+    screen.append(content);
 };

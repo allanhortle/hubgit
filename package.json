@@ -25,7 +25,10 @@
     "blessed-contrib": "^4.6.5",
     "commander": "^2.9.0",
     "immutable": "^3.8.1",
-    "marked": "^0.3.6"
+    "lorem-ipsum": "^1.0.3",
+    "marked": "^0.3.6",
+    "react": "^0.14.0",
+    "react-blessed": "^0.1.7"
   },
   "devDependencies": {
     "ava": "^0.17.0",
