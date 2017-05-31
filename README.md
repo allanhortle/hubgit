@@ -3,20 +3,19 @@
 ## Install
 
 ```
-npm install -g dr-symlink
+npm install -g hubgit
 ```
 
 
 # Usage
 
 ```
-  Usage: dr [options] [command]
+  Usage: hubgit [options] [command]
 
 
   Commands:
 
-    modules    list symlink node modules and thier versions
-    unstaged   list unstaged changes in symlinked node modules
+    releases   list a repos releases
 
   Options:
 
