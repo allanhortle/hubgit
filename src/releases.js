@@ -35,11 +35,12 @@ export default function modules(program, config) {
             var list = data.repository.releases.edges
                 .map(ii => ii.node)
                 .map(({tag, name, description}) => {
-                    var title = chalk.yellow(`${name} - ${tag.name}`);
+                    var title = chalk.yellow(`${tag.name} - ${name}`);
+                    var body = description ? `\n${description}\n` : '';
 
-                    return `${title}${description ? '\n' : ''}${description}`;
+                    return `${title}${body}`;
                 })
-                .join('\n\n');
+                .join('\n');
             Loader.stop();
             console.log(list);
         });
