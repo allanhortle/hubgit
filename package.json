@@ -8,7 +8,7 @@
     "lib"
   ],
   "name": "hubgit",
-  "version": "0.3.2",
+  "version": "0.4.0",
   "description": "Symlink Diagnostic CLI",
   "license": "UNLICENSED",
   "author": "Allan Hortle",
