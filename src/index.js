@@ -5,6 +5,7 @@
 import pkg from '../package.json';
 import program from 'commander';
 import releases from './releases';
+import CommitCalendar from './CommitCalendar';
 
 program
     .version(pkg.version)
@@ -21,6 +22,10 @@ program.parse(process.argv);
 switch (program.args[0]) {
     case 'releases':
         releases(program, {});
+        break;
+
+    case 'commits':
+        CommitCalendar(program, {});
         break;
 
     default:
