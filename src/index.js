@@ -5,7 +5,7 @@
 import pkg from '../package.json';
 import program from 'commander';
 import releases from './releases';
-import CommitCalendar from './CommitCalendar';
+import PullRequestCalendar from './PullRequestCalendar';
 
 program
     .version(pkg.version)
@@ -24,8 +24,8 @@ switch (program.args[0]) {
         releases(program, {});
         break;
 
-    case 'commits':
-        CommitCalendar(program, {});
+    case 'prs':
+        PullRequestCalendar(program, {});
         break;
 
     default:

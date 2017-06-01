@@ -9,7 +9,7 @@ import Table from './Table';
 function query() {
     return `{
         viewer {
-            contributedRepositories(first: 20, orderBy: {field: PUSHED_AT, direction:DESC}) {
+            contributedRepositories(first: 20, orderBy: {field: PUSHED_AT, direction:DESC}, affiliations: ORGANIZATION_MEMBER) {
                 nodes {
                     name
                     pullRequests(last: 100) {
@@ -27,7 +27,7 @@ function query() {
     }`;
 }
 
-export default function CommitCalendar(program, config) {
+export default function PullRequestCalendar(program, config) {
     Loader.start();
 
     const [, username, date] = program.args;
