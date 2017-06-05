@@ -11,6 +11,13 @@ import Loader from './Loader';
 function query(owner, name) {
     return `{
         repository(owner: "${owner}", name: "${name}") {
+            refs(last:100, refPrefix: "refs/tags/") {
+                edges {
+                    node {
+                        name
+                    }
+                }
+            }
             releases(last: 100) {
                 edges {
                     node {
@@ -32,11 +39,24 @@ export default function modules(program, config) {
     const [owner, name] = program.args[1].split('/');
     Request({query: query(owner, name)})
         .then(({data}) => {
-            var list = data.repository.releases.edges
+            var releases = data.repository.releases.edges
+                .reduce((rr, ii) => {
+                    rr[ii.node.tag.name] = ii.node;
+                    return rr;
+                }, {})
+
+
+            console.log(data.repository);
+
+            var list = data.repository.refs.edges
                 .map(ii => ii.node)
-                .map(({tag, name, description}) => {
+                .map(node => {
+                    var {tag, name, description} = releases[node.name] || {};
+                    if(!releases[node.name]) {
+                        return chalk.grey(node.name);
+                    }
                     var title = chalk.yellow(`${tag.name} - ${name}`);
-                    var body = description ? `\n${description}\n` : '';
+                    var body = description ? `\n${description}` : '';
 
                     return `${title}${body}`;
                 })
