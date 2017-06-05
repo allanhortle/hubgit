@@ -8,17 +8,17 @@ import ora from 'ora';
 import Request from './Request';
 import Loader from './Loader';
 
-function query(owner, name) {
+function query(owner, name, last) {
     return `{
         repository(owner: "${owner}", name: "${name}") {
-            refs(last:100, refPrefix: "refs/tags/") {
+            refs(last: ${last}, refPrefix: "refs/tags/") {
                 edges {
                     node {
                         name
                     }
                 }
             }
-            releases(last: 100) {
+            releases(last: ${last}) {
                 edges {
                     node {
                         tag {
@@ -37,16 +37,13 @@ export default function modules(program, config) {
     Loader.start();
 
     const [owner, name] = program.args[1].split('/');
-    Request({query: query(owner, name)})
+    Request({query: query(owner, name, program.last || 100)})
         .then(({data}) => {
             var releases = data.repository.releases.edges
                 .reduce((rr, ii) => {
                     rr[ii.node.tag.name] = ii.node;
                     return rr;
-                }, {})
-
-
-            console.log(data.repository);
+                }, {});
 
             var list = data.repository.refs.edges
                 .map(ii => ii.node)
@@ -56,7 +53,7 @@ export default function modules(program, config) {
                         return chalk.grey(node.name);
                     }
                     var title = chalk.yellow(`${tag.name} - ${name}`);
-                    var body = description ? `\n${description}` : '';
+                    var body = description && program.verbose ? `\n${description}` : '';
 
                     return `${title}${body}`;
                 })

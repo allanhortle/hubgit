@@ -9,8 +9,8 @@ import PullRequestCalendar from './PullRequestCalendar';
 
 program
     .version(pkg.version)
-    // .option('-l, --lurkles <items>', 'A list of config files to merge', val => val.split(','))
-    // .option('-d, --dry', 'show commands without running them')
+    .option('-l, --last <n>', 'limit lists by last ammount')
+    .option('-v, --verbose', 'be verbose')
     // .option('-c, --concurrent', 'run commands concurrently')
 
 program
