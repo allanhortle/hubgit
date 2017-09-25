@@ -5,6 +5,7 @@
 import pkg from '../package.json';
 import program from 'commander';
 import releases from './releases';
+import gui from './gui';
 import PullRequestCalendar from './PullRequestCalendar';
 
 program
@@ -29,6 +30,6 @@ switch (program.args[0]) {
         break;
 
     default:
-        console.log('hubgit');
+        gui(program, {})
         break;
 }
