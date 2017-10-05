@@ -36,7 +36,7 @@ function query(owner, name, last) {
 export default function modules(program, config) {
     Loader.start();
 
-    const [owner, name] = program.args[1].split('/');
+    const [owner, name] = program.args[0].split('/');
     Request({query: query(owner, name, program.last || 100)})
         .then(({data}) => {
             var releases = data.repository.releases.edges

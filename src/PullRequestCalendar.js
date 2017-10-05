@@ -30,7 +30,7 @@ function query() {
 export default function PullRequestCalendar(program, config) {
     Loader.start();
 
-    const [, username, date] = program.args;
+    const [username, date] = program.args;
 
     Request({query: query()})
         .then(({data}) => {

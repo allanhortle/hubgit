@@ -25,5 +25,5 @@ export default function Gui(program, config) {
     screen.key(['p'], () => PullRequestScreen({program, screen}));
     screen.key(['h'], () => HelpScreen({program, screen}));
 
-    HelpScreen({program, screen});
+    NotificationScreen({program, screen});
 }
