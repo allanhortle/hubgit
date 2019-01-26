@@ -9,8 +9,8 @@
   ],
   "name": "hubgit",
   "version": "0.5.0",
-  "description": "Symlink Diagnostic CLI",
-  "license": "UNLICENSED",
+  "description": "A Github CLUI",
+  "license": "MIT",
   "author": "Allan Hortle",
   "repository": {
     "type": "git",
@@ -22,92 +22,34 @@
   "private": false,
   "scripts": {
     "build": "rm -rf lib && babel src --out-dir lib",
-    "build-examples": "cd example && yarn install && yarn run build && cd -",
-    "deploy-to-gh-pages": "yarn run build && yarn run build-examples && yarn run docs && node scripts/publish.js",
     "prepublish": "yarn run build",
-    "watch": "yarn run build -- -w",
-    "ava": "NODE_ENV=test ava",
-    "check-coverage": "NODE_ENV=test nyc check-coverage --branches 100.0  --functions 100.0 --lines 100.0",
-    "docs": "jsdoc -c jsdoc.json",
-    "flow": "flow check",
-    "lint": "eslint src --ext js,jsx",
-    "lint-fix": "eslint src --ext js,jsx --fix",
-    "test": "NODE_ENV=test nyc --report-dir=./coverage ava && yarn run check-coverage",
-    "test-all": "NODE_ENV=test yarn run lint && yarn run flow && yarn run test"
+    "watch": "yarn build -w",
+    "flow": "blueflag-test flow",
+    "flow-coverage": "blueflag-test flow-coverage",
+    "lint": "blueflag-test lint",
+    "test": "yarn jest",
+    "test-all": "yarn lint && yarn flow && yarn test && yarn flow-coverage"
   },
   "devDependencies": {
-    "ava": "0.19.1",
-    "babel-cli": "^6.23.0",
-    "babel-core": "^6.23.0",
-    "babel-plugin-istanbul": "4.1.1",
-    "babel-preset-blueflag": "^0.3.0",
-    "babel-register": "^6.23.0",
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.2.2",
+    "babel-preset-blueflag": "^1.0.0",
+    "blueflag-test": "^0.22.0",
     "dotenv": "4.0.0",
-    "eslint": "^3.9.1",
-    "eslint-config-blueflag": "^0.4.0",
-    "gh-pages": "^0.11.0",
-    "git-url-parse": "^6.0.1",
-    "jsdoc": "^3.4.3",
-    "jsdoc-babel": "^0.3.0",
-    "jsdoc-react-proptypes": "^1.0.1",
-    "jsdonk": "0.4.18",
-    "nyc": "^10.0.0",
-    "proxyquire": "^1.7.10",
-    "sinon": "^2.1.0"
-  },
-  "ava": {
-    "require": [
-      "./pretest",
-      "babel-register"
-    ],
-    "babel": {
-      "presets": [
-        "blueflag"
-      ],
-      "plugins": [
-        "istanbul"
-      ],
-      "sourceMaps": "inline"
-    },
-    "files": [
-      "src/**/*-test.js"
-    ]
-  },
-  "nyc": {
-    "all": true,
-    "sourceMap": false,
-    "instrument": false,
-    "include": [
-      "src/**"
-    ],
-    "exclude": [
-      "src/**/*-test.js",
-      "dist"
-    ],
-    "reporter": [
-      "lcov",
-      "text"
-    ],
-    "extension": [
-      ".js",
-      ".jsx"
-    ],
-    "require": [
-      "babel-register"
-    ]
+    "ws": "^6.1.3"
   },
   "dependencies": {
-    "blessed": "^0.1.81",
-    "blessed-contrib": "^4.8.5",
-    "chalk": "^1.1.3",
-    "cli-table2": "^0.2.0",
-    "commander": "^2.11.0",
-    "fronads": "^0.12.0",
-    "git-utils": "^5.0.0",
-    "github": "^11.0.0",
-    "immutable": "^3.8.2",
+    "@octokit/rest": "^16.13.2",
+    "commander": "^2.19.0",
+    "neo-blessed": "^0.2.0",
     "ora": "^1.2.0",
-    "staged-git-files": "^0.0.4",
-    "superagent": "^3.5.2"
+    "react": "^16.7.0",
+    "react-blessed": "^0.5.0",
+    "react-blessed-contrib": "^0.2.1",
+    "react-enty": "^0.8.0",
+    "react-goose": "^0.6.1",
+    "react-router": "^4.3.1",
+    "unfunctional": "^0.1.0",
+    "unmutable": "^0.41.1"
   }
 }
