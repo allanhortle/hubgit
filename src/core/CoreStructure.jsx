@@ -18,15 +18,16 @@ export default class CoreStructure extends Structure<{}>{
             autoCommandKeys
             mouse={true}
             keys={true}
+            left={0}
             height={1}
             style={{
-                bg: 'blue',
+                //bg: 'blue',
                 selected: {
-                    bg: 'blue'
+                    fg: 'blue'
                 },
                 item: {
-                    fg: 'black',
-                    bg: 'blue'
+                    //fg: 'black',
+                    //bg: 'blue'
                 }
             }}
             items={{
