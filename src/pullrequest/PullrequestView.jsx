@@ -1,8 +1,12 @@
 // @flow
+import React from 'react';
 import PullrequestStructure from './PullrequestStructure';
 import composeWith from 'unmutable/lib/util/composeWith';
 
 export default composeWith(
-    PullrequestStructure
+    (props) => {
+        log(props);
+        return <PullrequestStructure />;
+    }
 );
 

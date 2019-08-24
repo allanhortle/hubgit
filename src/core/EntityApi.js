@@ -3,15 +3,19 @@ import {EntityApi} from 'react-enty';
 import ApplicationSchema from './ApplicationSchema';
 import github from '../service/Github';
 
-const Api = EntityApi(ApplicationSchema, {
+
+
+const Api = EntityApi({
     repoList: () => github.activity.listReposWatchedByUser({username: 'allanhortle', per_page: 100})
         .then(({data}) => ({repoList: data})),
 
-    repoReadme: ({owner, repo, path, ref}) => github.repos.getContents({owner, repo, path, ref})
-        .then(({data}) => ({content: data}))
-});
+    repoReadme: ({org, repo}) => github.repos.getReadme({owner: org, repo})
+        .then(({data}) => ({readme: data}))
+}, ApplicationSchema);
 
-export const EntityProvider = Api.EntityProvider;
+export const EntityProviderHoc = Api.ProviderHoc;
 
-export const RepoList = Api.repoList.request;
-export const RepoReadme = Api.repoReadme.request;
+export const RepoList = Api.repoList.requestHoc;
+export const RepoReadme = Api.repoReadme.requestHoc;
+
+export default Api;

@@ -1,14 +1,15 @@
 // @flow
 import type {Node} from 'react';
 import React from 'react';
-import Structure from 'react-goose/lib/util/Layout';
 
-export default class PullrequestStructure extends Structure<{}>{
-    static elements = ['list', 'readme'];
-    static layout = (props: *) => {
+type Props = {
+};
+
+export default class PullrequestStructure extends React.Component<Props> {
+    render() {
         return <box>
-            {props.list()}
-            {props.readme()}
+            {this.list()}
+            {this.readme()}
         </box>;
     }
     list = (): Node => {

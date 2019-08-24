@@ -7,8 +7,7 @@ import CoreView from './core/CoreView';
 program
     .version(pkg.version)
     .option('-l, --last <n>', 'limit lists by last ammount')
-    .option('-v, --verbose', 'be verbose')
-    // .option('-c, --concurrent', 'run commands concurrently')
+    .option('-v, --verbose', 'be verbose');
 
 
 

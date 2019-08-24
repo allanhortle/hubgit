@@ -7,8 +7,8 @@ import {Route} from 'react-router';
 const style = {
     top: 'center',
     left: 'center',
-    width: '80%',
-    height: '80%',
+    width: '100%',
+    height: '100%',
     border: {
         type: 'line'
     },
@@ -34,7 +34,7 @@ export default () => (Component: *) => class ErrorBoundary extends React.Compone
         const {error} = this.state;
         if(error) {
             return <element>
-                <box class={style} tags={true} label="{red-fg} Error {/red-fg}">{error.message}</box>
+                <box class={style} tags={true} label="{red-fg} Error {/red-fg}">{error.stack}</box>
             </element>;
         }
         return <Component {...this.props} />;
