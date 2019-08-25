@@ -2,7 +2,6 @@
 import {graphql} from '@octokit/graphql';
 
 export default async (vars, query) => {
-    log(process.env.GITHUB_TOKEN);
     return graphql(query, {
         ...vars,
         headers: {

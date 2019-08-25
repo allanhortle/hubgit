@@ -14,7 +14,6 @@ import Title from '../affordance/Title';
 
 
 export default (props) => {
-    log(props.match.params);
     return <ListLayout
         request={Api.repo.issues.useRequest}
         payload={props.match.params}

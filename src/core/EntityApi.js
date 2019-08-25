@@ -29,6 +29,7 @@ query($owner: String!, $repo: String!) {
           url
           author {login}
           comments(first:100) {
+            totalCount
             edges {
               node {
                 id
@@ -83,10 +84,63 @@ query($owner: String!, $repo: String!) {
   }
 }
         `),
-        readme: async (params) => {
-            const request = await github.repos.getReadme(params);
-            return repo(params, 'readme', request.data);
+
+        releases: async (params) => github(params, `
+query($owner: String!, $repo: String!) {
+  repository(owner: $owner, name: $repo) {
+    releases(first: 50, orderBy: {field: CREATED_AT, direction: DESC}) {
+      edges {
+        node {
+          id
+          createdAt
+          updatedAt
+          isDraft
+        isPrerelease
+          url
+          author {login}
+          tagName
+          tag {
+            id
+          }
+          name
+          description
+          publishedAt
         }
+      }
+    }
+  }
+}
+        `),
+
+        readme: async (params) => github(params, `
+query($owner: String!, $repo: String!) {
+  repository(owner: $owner, name: $repo) {
+    pullRequests(states:OPEN) {
+      totalCount
+    }
+    issues(states: OPEN) {
+      totalCount
+    }
+    stargazers {
+      totalCount
+    }
+    watchers {
+      totalCount
+    }
+    url
+    sshUrl
+    description
+    homepageUrl
+    isArchived
+   object(expression: "master:README.md") {
+      ... on Blob {
+        text
+      }
+    }
+  }
+}
+        `),
+
     }
 }, ApplicationSchema);
 

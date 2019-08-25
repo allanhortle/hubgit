@@ -74,7 +74,7 @@ export default (props: Props) => {
                         map(renderListItem),
                         _ => [listHead].concat(_)
                     )}
-                    onSelect={data => setItem(onSelect(data.content))}
+                    onSelect={data => setItem(onSelect(data.content, data))}
                 />
                 </box>
                 <box left="40%">

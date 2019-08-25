@@ -5,6 +5,7 @@ import {Route, Redirect, Switch} from 'react-router';
 import PullrequestView from '../pullrequest/PullrequestView';
 import IssuesView from '../repo/IssuesView';
 import RepoView from '../repo/RepoView';
+import ReleasesView from '../repo/ReleasesView';
 
 export default function CoreStructure(props) {
     const {history} = props;
@@ -14,10 +15,10 @@ export default function CoreStructure(props) {
         <box top={1} left={0} width="100%" height="100%-1">
             <Switch>
                 <Route exact path="/:owner/:repo/issues" component={IssuesView} />
-                <Route exact path="/:owner/:repo/releases" render={() => 'releases'} />
+                <Route exact path="/:owner/:repo/releases" component={ReleasesView} />
                 <Route exact path="/:owner/:repo/pulls" component={PullrequestView} />
                 <Route exact path="/:owner/:repo/readme" component={RepoView} />
-                <Redirect to={`/${repo}/issues`} />
+                <Redirect to={`/${repo}/pulls`} />
             </Switch>
         </box>
         <listbar
