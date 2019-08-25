@@ -1,10 +1,13 @@
 // @flow
-import Octokit from '@octokit/rest';
+import {graphql} from '@octokit/graphql';
 
-const github = new Octokit({
-    auth: `token ${process.env.GITHUB_TOKEN}`
-});
-
-
-export default github;
+export default async (vars, query) => {
+    log(process.env.GITHUB_TOKEN);
+    return graphql(query, {
+        ...vars,
+        headers: {
+            authorization: `token ${process.env.GITHUB_TOKEN}`
+        }
+    });
+};
 

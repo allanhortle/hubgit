@@ -7,13 +7,11 @@ import CoreView from './core/CoreView';
 program
     .version(pkg.version)
     .option('-l, --last <n>', 'limit lists by last ammount')
-    .option('-v, --verbose', 'be verbose');
+    .option('-v, --verbose', 'be verbose')
+    .option('-r, --repo <repo>', 'org/repo');
 
 
 
 
 program.parse(process.argv);
-
-if(!program.args.length) {
-    CoreView(program);
-}
+CoreView(program);

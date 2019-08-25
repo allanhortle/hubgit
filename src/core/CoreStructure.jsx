@@ -7,9 +7,18 @@ import RepoView from '../repo/RepoView';
 
 export default function CoreStructure(props) {
     const {history} = props;
-    const [repo, setRepo] = useState('blueflag/enty');
+    const [repo, setRepo] = useState(props.program.repo);
     const navigate = (path) => history.push(`/${repo}/${path}`);
     return <box>
+        <box top={1} left={0} width="100%" height="100%-1">
+            <Switch>
+                <Route exact path="/:owner/:repo/issues" render={() => 'issues'} />
+                <Route exact path="/:owner/:repo/releases" render={() => 'releases'} />
+                <Route path="/:owner/:repo/pulls" component={PullrequestView} />
+                <Route path="/:owner/:repo" component={RepoView} />
+                <Redirect to={`/${repo}/pulls`} />
+            </Switch>
+        </box>
         <listbar
             autoCommandKeys
             mouse={true}
@@ -18,11 +27,11 @@ export default function CoreStructure(props) {
             height={1}
             top={0}
             style={{
-                bg: '#ccc',
+                bg: 'white',
                 fg: 'black',
                 item: {
                     fg: 'black',
-                    bg: '#ccc'
+                    bg: 'white'
                 },
                 selected: {
                     bg: 'green',
@@ -36,15 +45,6 @@ export default function CoreStructure(props) {
                 ['releases']: () => navigate('releases')
             }}
         />
-        <box top={2} left={1} width="100%-2" height="100%-3">
-            <Switch>
-                <Route exact path="/:org/:repo/issues" render={() => 'issues'} />
-                <Route exact path="/:org/:repo/releases" render={() => 'releases'} />
-                <Route exact path="/:org/:repo/pulls" component={PullrequestView} />
-                <Route path="/:org/:repo" component={RepoView} />
-                <Redirect to={`/${repo}`} />
-            </Switch>
-        </box>
-        <element top={0} right={1} width={repo.length} height={1} style={{bg: '#ccc', fg: 'black'}} content={repo} />
+        <element top={0} right={1} width={repo.length} height={1} style={{bg: 'white', fg: 'black'}} content={repo} />
     </box>;
 }

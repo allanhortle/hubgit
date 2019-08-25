@@ -3,19 +3,51 @@ import {EntityApi} from 'react-enty';
 import ApplicationSchema from './ApplicationSchema';
 import github from '../service/Github';
 
+const repo = ({owner, repo}, key, value) => ({repo: {
+    id: `${owner}/${repo}`,
+    [key]: value
+}});
 
 
 const Api = EntityApi({
-    repoList: () => github.activity.listReposWatchedByUser({username: 'allanhortle', per_page: 100})
-        .then(({data}) => ({repoList: data})),
-
-    repoReadme: ({org, repo}) => github.repos.getReadme({owner: org, repo})
-        .then(({data}) => ({readme: data}))
+    repo: {
+        pulls: async (params) => github(params, `
+query($owner: String!, $repo: String!) {
+  repository(owner: $owner, name: $repo) {
+    pullRequests(first: 100, orderBy: {field: UPDATED_AT, direction: DESC}) {
+      edges {
+        node {
+          id
+          number
+          title
+          body
+          state
+          baseRefName
+          headRefName
+          createdAt
+          updatedAt
+          author {login}
+          comments(first:100) {
+            edges {
+              node {
+                id
+                author {login}
+                body
+                createdAt
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+        `, params),
+        readme: async (params) => {
+            const request = await github.repos.getReadme(params);
+            return repo(params, 'readme', request.data);
+        }
+    }
 }, ApplicationSchema);
-
-export const EntityProviderHoc = Api.ProviderHoc;
-
-export const RepoList = Api.repoList.requestHoc;
-export const RepoReadme = Api.repoReadme.requestHoc;
 
 export default Api;

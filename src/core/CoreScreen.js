@@ -1,5 +1,5 @@
 // @flow
-import blessed from 'neo-blessed';
+import blessed from 'blessed';
 
 const screen = blessed.screen({
     autoPadding: true,
@@ -16,6 +16,7 @@ screen.debugLog.left = 0;
 
 screen.key(['escape', 'q', 'C-c'], () => process.exit(0));
 
-global.log = (val) => screen.debug('Log:', val);
+global.log = (...val) => screen.debug(...val);
+
 
 export default screen;

@@ -5,7 +5,7 @@ import composeWith from 'unmutable/lib/util/composeWith';
 import pipe from 'unmutable/lib/util/pipe';
 import {createBlessedRenderer} from 'react-blessed';
 
-import {EntityProviderHoc} from './EntityApi';
+import Api from './EntityApi';
 import CoreStructure from './CoreStructure';
 import CoreScreen from './CoreScreen';
 import MemoryRouterHoc from './MemoryRouterHoc';
@@ -17,9 +17,10 @@ import PullrequestView from '../pullrequest/PullrequestView';
 const render = createBlessedRenderer(blessed);
 
 export default pipe(
-    () => composeWith(
+    (program) => composeWith(
+        (Component) => (props) => <Component {...props} program={program} />,
         ErrorBoundaryHoc(),
-        EntityProviderHoc(),
+        Api.ProviderHoc(),
         MemoryRouterHoc(),
         CoreStructure
     ),

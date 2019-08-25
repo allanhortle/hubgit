@@ -1,6 +1,6 @@
 // @flow
 import type {Node} from 'react';
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Switch, Route} from 'react-router';
 import get from 'unmutable/lib/get';
 import map from 'unmutable/lib/map';
@@ -14,15 +14,14 @@ import LoadingBoundary from '../core/LoadingBoundary';
 
 
 export default function RepoStructure(props) {
-    const readme = Api.repoReadme.useRequest();
-    const {org, repo} = props.match.params;
+    const readme = Api.repo.readme.useRequest();
     useEffect(() => {
-        readme.onRequest({org, repo});
+        readme.onRequest(props.match.params)
     }, []);
 
     return <LoadingBoundary message={readme}>
-        {(data) => {
-            const decoded = new Buffer(data ? data.readme.content : '', 'base64');
+        {(data, meta) => {
+            const decoded = new Buffer(data.repo.readme.content || '', 'base64');
             return <box mouse scrollable>{decoded.toString('ascii')}</box>;
         }}
     </LoadingBoundary>;
