@@ -6,6 +6,9 @@
 npm install -g hubgit
 ```
 
+generate and set `GITHUB_TOKEN` in your environment
+
+
 
 ## Usage
 
