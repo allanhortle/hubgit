@@ -14,7 +14,7 @@ const Api = EntityApi({
         pulls: async (params) => github(params, `
 query($owner: String!, $repo: String!) {
   repository(owner: $owner, name: $repo) {
-    pullRequests(first: 100, orderBy: {field: UPDATED_AT, direction: DESC}) {
+    pullRequests(first: 50, orderBy: {field: UPDATED_AT, direction: DESC}) {
       edges {
         node {
           id
@@ -43,7 +43,46 @@ query($owner: String!, $repo: String!) {
     }
   }
 }
-        `, params),
+        `),
+        issues: async (params) => github(params, `
+query($owner: String!, $repo: String!) {
+  repository(owner: $owner, name: $repo) {
+    issues(first: 50, orderBy: {field: CREATED_AT, direction: DESC}) {
+      edges {
+        node {
+          id
+          number
+          title
+          body
+          state
+          createdAt
+          updatedAt
+          url
+          author {login}
+          comments(first:100) {
+            edges {
+              node {
+                id
+                author {login}
+                body
+                createdAt
+              }
+            }
+          }
+          labels(first: 10) {
+            edges {
+              node {
+                color
+                name
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+        `),
         readme: async (params) => {
             const request = await github.repos.getReadme(params);
             return repo(params, 'readme', request.data);

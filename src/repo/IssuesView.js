@@ -14,11 +14,12 @@ import Title from '../affordance/Title';
 
 
 export default (props) => {
+    log(props.match.params);
     return <ListLayout
-        request={Api.repo.pulls.useRequest}
+        request={Api.repo.issues.useRequest}
         payload={props.match.params}
         id={get('number')}
-        list={getIn(['repository', 'pullRequests'])}
+        list={getIn(['repository', 'issues'])}
         listHead={['#', 'Status', 'Name']}
         renderListItem={ii => [
             `${ii.number}`,
@@ -34,16 +35,19 @@ export default (props) => {
 }
 
 function PullDescription({data}) {
-    const {state, body, number, author, headRefName, baseRefName, createdAt, updatedAt, url, comments} = data;
+    const {state, body, number, author, createdAt, updatedAt, url, comments} = data;
     const description = body || 'No Description';
     const descriptionLines = description.split('\r').length;
+    const labels = data.labels.edges
+        .map(({node}) => `{#${node.color}-fg}${node.name}{/}`)
+        .join(', ');
 
     return <box mouse scrollable border="bg">
         <listtable top={0} tags align="left" rows={[
             ['state: ', colorState(state)],
             ['number: ', `#${number}`],
             ['opened by: ', yellow(author.login)],
-            ['merge: ', `${blue(headRefName)} into ${blue(baseRefName)}`],
+            ['labels: ', labels],
             ['created', `${createdAt}`],
             ['updated', `${updatedAt}`],
             ['url', `${url}`],

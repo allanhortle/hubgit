@@ -3,6 +3,7 @@ import type {Node} from 'react';
 import React, {useState} from 'react';
 import {Route, Redirect, Switch} from 'react-router';
 import PullrequestView from '../pullrequest/PullrequestView';
+import IssuesView from '../repo/IssuesView';
 import RepoView from '../repo/RepoView';
 
 export default function CoreStructure(props) {
@@ -12,11 +13,11 @@ export default function CoreStructure(props) {
     return <box>
         <box top={1} left={0} width="100%" height="100%-1">
             <Switch>
-                <Route exact path="/:owner/:repo/issues" render={() => 'issues'} />
+                <Route exact path="/:owner/:repo/issues" component={IssuesView} />
                 <Route exact path="/:owner/:repo/releases" render={() => 'releases'} />
                 <Route exact path="/:owner/:repo/pulls" component={PullrequestView} />
                 <Route exact path="/:owner/:repo/readme" component={RepoView} />
-                <Redirect to={`/${repo}/pulls`} />
+                <Redirect to={`/${repo}/issues`} />
             </Switch>
         </box>
         <listbar
