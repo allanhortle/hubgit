@@ -3,116 +3,64 @@ import React, {useEffect, useState} from 'react';
 import LoadingBoundary from '../core/LoadingBoundary';
 import Api from '../core/EntityApi';
 import get from 'unmutable/lib/get';
+import getIn from 'unmutable/lib/getIn';
 import map from 'unmutable/lib/map';
 import sortBy from 'unmutable/lib/sortBy';
 import pipeWith from 'unmutable/lib/util/pipeWith';
 import pipe from 'unmutable/lib/util/pipe';
-import {blue, red, green, magenta} from '../util/tag';
+import {blue, red, green, magenta, grey, yellow} from '../util/tag';
+import ListLayout from '../affordance/ListLayout';
+import Title from '../affordance/Title';
 
-const Title = ({content, top}) => {
-    const style = {
-        fg: 'black',
-        bg: 'white',
-    };
-    return <box tags top={top} style={style} height={1} content={`{center}${content}{/center}`}>
-    </box>
-}
 
 export default (props) => {
-    const [pull, setPull] = useState();
-    const pulls = Api.repo.pulls.useRequest();
-    const {owner, repo, pullId} = props.match.params;
-    useEffect(() => {
-        pulls.onRequest(props.match.params)
-            .then(data => setPull(data.repository.pullRequests.edges[0].node.number))
-            .catch(err => log(err));
-    }, []);
-
-
-    return <LoadingBoundary message={pulls}>
-        {(data, meta) => {
-            const pulls = data.repository.pullRequests.edges.map(ii => ii.node);
-            const currentPull = pulls.find(ii => ii.number == pull);
-            log(currentPull);
-            return <>
-                <listtable
-                    top={1}
-                    width="40%"
-                    align="left"
-                    mouse={true}
-                    keys={true}
-                    focused={true}
-                    vi={true}
-                    tags={true}
-                    pad={0}
-                    style={{
-                        selected: {
-                            fg: 'black',
-                            bg: 'yellow'
-                        },
-                        scrollbar: {
-                            bg: 'blue'
-                        }
-                    }}
-                    rows={pipeWith(
-                        pulls,
-                        map(ii => [
-                            `#${ii.number}`,
-                            colorState(ii.state),
-                            ii.title
-                        ])
-                    )}
-                    onSelect={data => log(data.content, data.content.match(/#(\d*)/)) || setPull(data.content.match(/#(\d*)/)[1])}
-                />
-                <box left="40%">
-                    {currentPull && <PullDescription pull={currentPull} />}
-                </box>
-             </>;
+    return <ListLayout
+        request={Api.repo.pulls.useRequest}
+        payload={props.match.params}
+        id={get('number')}
+        list={getIn(['repository', 'pullRequests'])}
+        listHead={['#', 'Status', 'Name']}
+        renderListItem={ii => [
+            `${ii.number}`,
+            colorState(ii.state),
+            ii.title
+        ]}
+        itemView={PullDescription}
+        onSelect={content => {
+            const match = content.match(/^(\d*)/) || [];
+            return parseInt(match[1], 10);
         }}
-    </LoadingBoundary>;
+    />;
 }
 
-function PullDescription({pull}) {
-    const bodyLines = pull.body.split('\r').length;
-    const {state, body} = pull;
+function PullDescription({data}) {
+    const {state, body, number, author, headRefName, baseRefName, createdAt, updatedAt, url, comments} = data;
+    const description = body || 'No Description';
+    const descriptionLines = description.split('\r').length;
 
-    const statsHeight = 7
-    const descriptionOffset = body ? statsHeight : 0;
-    const commentOffset = body ? statsHeight + bodyLines + 3 : statsHeight;
-
-
-
-    log(pull.comments);
-        //<Title top={81} content="Comments" />
-        //<element top={82} height={80} border={{type: 'line'}} content={pull.body} />
-
-    return <box mouse scrollable padding={{left: 1, top: 1, right: 1, bottom: 1}}>
-        <listtable tags align="left" rows={[
+    return <box mouse scrollable border="bg">
+        <listtable top={0} tags align="left" rows={[
             ['state: ', colorState(state)],
-            ['number: ', `#${pull.number}`],
-            ['opened by: ', `${pull.author.login}`],
-            ['merge: ', `${blue(pull.headRefName)} into ${blue(pull.baseRefName)}`],
-            ['created', `${pull.createdAt}`],
-            ['updated', `${pull.updatedAt}`],
-
+            ['number: ', `#${number}`],
+            ['opened by: ', yellow(author.login)],
+            ['merge: ', `${blue(headRefName)} into ${blue(baseRefName)}`],
+            ['created', `${createdAt}`],
+            ['updated', `${updatedAt}`],
+            ['url', `${url}`],
         ]}/>
-        {pull.body && <>
-            <Title top={descriptionOffset} content="Description" />
-            <element top={descriptionOffset + 1} height={bodyLines} content={pull.body} />
-        </>}
-        {pull.comments.edges.length > 0 && <>
-            <Title top={commentOffset} content="Comments" />
-            <table
-                align="left"
-                top={commentOffset + 1}
-                tags
-                rows={pull.comments.edges.map(({node}) => [
-                    `{yellow-fg}${node.author.login}{/yellow-fg}`,
-                    node.createdAt,
-                    '\n' + node.body.trim()
-                ])}
-            />
-        </>}
+        <Title top={8} content="Description" />
+        <element top={10} height={descriptionLines} content={description} />
+        <Title top={11 + descriptionLines} content="Comments" />
+        <table
+            align="left"
+            top={13 + descriptionLines}
+            tags
+            rows={comments.edges.map(({node}) => [
+                yellow(node.author.login),
+                grey(node.createdAt),
+                '\n' + (node.body.replace(/^\s+|\s+$/g, ''))
+            ])}
+        />
     </box>;
 }
 

@@ -26,6 +26,7 @@ query($owner: String!, $repo: String!) {
           headRefName
           createdAt
           updatedAt
+          url
           author {login}
           comments(first:100) {
             edges {

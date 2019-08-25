@@ -14,8 +14,8 @@ export default function CoreStructure(props) {
             <Switch>
                 <Route exact path="/:owner/:repo/issues" render={() => 'issues'} />
                 <Route exact path="/:owner/:repo/releases" render={() => 'releases'} />
-                <Route path="/:owner/:repo/pulls" component={PullrequestView} />
-                <Route path="/:owner/:repo" component={RepoView} />
+                <Route exact path="/:owner/:repo/pulls" component={PullrequestView} />
+                <Route exact path="/:owner/:repo/readme" component={RepoView} />
                 <Redirect to={`/${repo}/pulls`} />
             </Switch>
         </box>
@@ -34,14 +34,14 @@ export default function CoreStructure(props) {
                     bg: 'white'
                 },
                 selected: {
-                    bg: 'green',
+                    bg: 'yellow',
                     fg: 'black'
                 }
             }}
             items={{
-                ['repo']: () => navigate(''),
                 ['pulls']: () => navigate('pulls'),
                 ['issues']: () => navigate('issues'),
+                ['readme']: () => navigate('readme'),
                 ['releases']: () => navigate('releases')
             }}
         />
