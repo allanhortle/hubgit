@@ -35,16 +35,22 @@ export default (props: Props) => {
 
     const [item, setItem] = useState();
     const message = request();
+    const safeList = (data) => list(data) || {edges: []};
 
     useEffect(() => {
         message
             .onRequest(payload)
-            .then(data => setItem(id(list(data).edges[0].node)));
+            .then(data => {
+                const safe = safeList(data);
+                if(safe.edges.length) {
+                    setItem(id(safeList(data).edges[0].node))
+                }
+            });
     }, []);
 
     return <LoadingBoundary message={message}>
         {(data, meta) => {
-            const plainList = list(data).edges.map(ii => ii.node);
+            const plainList = safeList(data).edges.map(ii => ii.node);
             const currentItem = plainList.find(ii => id(ii) === item);
             return <>
                 <box
