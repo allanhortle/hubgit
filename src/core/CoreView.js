@@ -7,7 +7,7 @@ import {createBlessedRenderer} from 'react-blessed';
 
 import Api from './EntityApi';
 import CoreStructure from './CoreStructure';
-import CoreScreen from './CoreScreen';
+import CoreScreen, {initScreen} from './CoreScreen';
 import MemoryRouterHoc from './MemoryRouterHoc';
 import ErrorBoundaryHoc from './ErrorBoundaryHoc';
 
@@ -17,16 +17,15 @@ import PullrequestView from '../pullrequest/PullrequestView';
 const render = createBlessedRenderer(blessed);
 
 export default pipe(
-    (program) => composeWith(
-        (Component) => (props) => <Component {...props} program={program} />,
+    (repoData) => composeWith(
+        (Component) => (props) => <Component {...props} repoData={repoData} />,
         ErrorBoundaryHoc(),
         Api.ProviderHoc(),
         MemoryRouterHoc(),
         CoreStructure
     ),
-    (Structure) => render(<Structure
-        repoView={RepoView}
-        pullrequestView={PullrequestView}
-    />, CoreScreen)
+    (Structure) => {
+        return render(<Structure />, CoreScreen)
+    }
 );
 

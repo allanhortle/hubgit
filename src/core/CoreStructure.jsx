@@ -9,7 +9,8 @@ import ReleasesView from '../repo/ReleasesView';
 
 export default function CoreStructure(props) {
     const {history} = props;
-    const [repo, setRepo] = useState(props.program.repo);
+    const {owner, name} = props.repoData;
+    const [repo, setRepo] = useState(`${owner}/${name}`);
     const navigate = (path) => history.push(`/${repo}/${path}`);
     return <box>
         <box top={1} left={0} width="100%" height="100%-1">
