@@ -34,32 +34,53 @@ export default (props) => {
 }
 
 function PullDescription({data}) {
-    const {state, body, number, author, headRefName, baseRefName, createdAt, updatedAt, url, comments} = data;
+    const {
+        additions,
+        author,
+        baseRefName,
+        body,
+        comments,
+        createdAt,
+        deletions,
+        headRefName,
+        number,
+        reviewThreads,
+        state,
+        updatedAt,
+        url
+    } = data;
     const description = body || 'No Description';
     const descriptionLines = description.split('\r').length;
 
     return <box mouse scrollable border="bg">
         <listtable top={0} tags align="left" rows={[
-            ['state: ', colorState(state)],
+            ['changes:', `${green('+' + additions)} ${red('-' + deletions)}`],
             ['number: ', `#${number}`],
-            ['opened by: ', yellow(author.login)],
-            ['merge: ', `${blue(headRefName)} into ${blue(baseRefName)}`],
-            ['created', `${createdAt}`],
-            ['updated', `${updatedAt}`],
-            ['url', `${url}`],
+            ['state:', colorState(state)],
+            ['opened by:', yellow(author.login)],
+            ['merge:', `${blue(headRefName)} into ${blue(baseRefName)}`],
+            ['created:', `${createdAt}`],
+            ['updated:', `${updatedAt}`],
+            ['url:', `${url}`],
         ]}/>
-        <Title top={8}>Description</Title>
-        <element top={10} height={descriptionLines} content={description} />
-        <Title top={11 + descriptionLines}>Comments</Title>
+        <Title top={9}>Description</Title>
+        <element top={11} height={descriptionLines} content={description} />
+        <Title top={12 + descriptionLines}>Comments</Title>
         <table
             align="left"
-            top={13 + descriptionLines}
+            top={14 + descriptionLines}
             tags
             rows={comments.edges.map(({node}) => [
                 yellow(node.author.login),
                 grey(node.createdAt),
                 '\n' + (node.body.replace(/^\s+|\s+$/g, ''))
-            ])}
+            ]).concat(...reviewThreads.edges.map(({node}) => [
+                ...node.comments.edges.map(({node}) => [
+                    yellow(node.author.login),
+                    grey(node.createdAt),
+                    '\n' + node.body
+                ])
+            ]))}
         />
     </box>;
 }

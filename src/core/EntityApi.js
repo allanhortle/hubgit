@@ -12,7 +12,7 @@ const repo = ({owner, repo}, key, value) => ({repo: {
 const Api = EntityApi({
     repo: {
         pulls: async (params) => github(params, `
-query($owner: String!, $repo: String!) {
+query ($owner: String!, $repo: String!) {
   repository(owner: $owner, name: $repo) {
     pullRequests(first: 50, orderBy: {field: UPDATED_AT, direction: DESC}) {
       edges {
@@ -27,13 +27,40 @@ query($owner: String!, $repo: String!) {
           createdAt
           updatedAt
           url
-          author {login}
-          comments(first:100) {
+          author {
+            login
+          }
+          additions
+          deletions
+          reviewThreads(first: 10) {
+            edges {
+              node {
+                id
+                isResolved
+                comments(first: 10) {
+                  edges {
+                    node {
+                      path
+                      diffHunk
+                      body
+                      author {
+                        login
+                      }
+                      createdAt
+                    }
+                  }
+                }
+              }
+            }
+          }
+          comments(first: 25) {
             totalCount
             edges {
               node {
                 id
-                author {login}
+                author {
+                  login
+                }
                 body
                 createdAt
               }
@@ -45,6 +72,7 @@ query($owner: String!, $repo: String!) {
   }
 }
         `),
+
         issues: async (params) => github(params, `
 query($owner: String!, $repo: String!) {
   repository(owner: $owner, name: $repo) {
