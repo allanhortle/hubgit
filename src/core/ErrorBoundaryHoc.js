@@ -33,9 +33,7 @@ export default () => (Component: *) => class ErrorBoundary extends React.Compone
     render() {
         const {error} = this.state;
         if(error) {
-            return <element>
-                <box class={style} tags={true} label="{red-fg} Error {/red-fg}">{error.stack}</box>
-            </element>;
+            return <box class={style} tags={true} label="{red-fg} Error! {/red-fg}">{error.stack}</box>;
         }
         return <Component {...this.props} />;
     }

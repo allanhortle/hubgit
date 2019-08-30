@@ -142,6 +142,18 @@ query($owner: String!, $repo: String!) {
 
         readme: async (params) => github(params, `
 query($owner: String!, $repo: String!) {
+    repository(owner: $owner, name: $repo) {
+        object(expression: "master:README.md") {
+            ... on Blob {
+            text
+            }
+        }
+    }
+}
+        `),
+
+        repo: async (params) => github(params, `
+query($owner: String!, $repo: String!) {
   repository(owner: $owner, name: $repo) {
     pullRequests(states:OPEN) {
       totalCount

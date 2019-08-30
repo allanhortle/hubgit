@@ -7,12 +7,12 @@ export default function(props) {
         fallbackOnRefetch={true}
         fallback={() => "Loading..."}
         error={() => <box
+            border={{
+                type: 'line',
+            }}
             class={{
                 width: '100%',
                 height: '100%',
-                border: {
-                    type: 'line'
-                },
                 style: {
                     border: {
                         fg: 'red'
