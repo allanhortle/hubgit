@@ -14,9 +14,10 @@ import Title from '../affordance/Title';
 
 
 export default (props) => {
+    const {name, owner} = props.repo;
     return <ListLayout
         request={Api.repo.releases.useRequest}
-        payload={props.match.params}
+        payload={{name, owner}}
         id={get('tagName')}
         list={getIn(['repository', 'releases'])}
         listHead={['Tag', 'Name']}

@@ -1,28 +1,42 @@
 // @flow
 import type {Node} from 'react';
-import React, {useState} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
+import {useCoreContext} from './CoreContext';
 import {Route, Redirect, Switch} from 'react-router';
 import PullrequestView from '../pullrequest/PullrequestView';
 import IssuesView from '../repo/IssuesView';
 import RepoView from '../repo/RepoView';
 import ReleasesView from '../repo/ReleasesView';
 
+function content(view) {
+    if(view === 'readme') return RepoView;
+    if(view === 'releases') return ReleasesView;
+    if(view === 'issues') return IssuesView;
+    return PullrequestView;
+}
+
 export default function CoreStructure(props) {
-    const {history} = props;
-    const {owner, name} = props.repoData;
-    const [repo, setRepo] = useState(`${owner}/${name}`);
-    const navigate = (path) => history.push(`/${repo}/${path}`);
+    const nav = useRef();
+    const {view, repo, setContext} = useCoreContext();
+    const items = [
+        'pulls',
+        'issues',
+        'readme',
+        'releases',
+    ];
+    const navigate = (view) => setContext({view});
+    const Content = content(view);
+    const {full_name} = repo;
+
+    useEffect(() => {
+        nav.current.select(items.findIndex(ii => ii === view));
+    }, []);
     return <box>
         <box top={1} left={0} width="100%" height="100%-1">
-            <Switch>
-                <Route exact path="/:owner/:repo/issues" component={IssuesView} />
-                <Route exact path="/:owner/:repo/releases" component={ReleasesView} />
-                <Route exact path="/:owner/:repo/pulls" component={PullrequestView} />
-                <Route exact path="/:owner/:repo/readme" component={RepoView} />
-                <Redirect to={`/${repo}/pulls`} />
-            </Switch>
+            <Content repo={repo} />
         </box>
         <listbar
+            ref={nav}
             autoCommandKeys
             mouse={true}
             keys={true}
@@ -37,17 +51,15 @@ export default function CoreStructure(props) {
                     bg: 'white'
                 },
                 selected: {
-                    bg: 'yellow',
-                    fg: 'black'
+                    fg: 'yellow',
+                    bg: 'black'
                 }
             }}
-            items={{
-                ['pulls']: () => navigate('pulls'),
-                ['issues']: () => navigate('issues'),
-                ['readme']: () => navigate('readme'),
-                ['releases']: () => navigate('releases')
-            }}
+            items={items.reduce((rr, ii) => {
+                rr[ii] = () => navigate(ii);
+                return rr;
+            }, {})}
         />
-        <element top={0} right={1} width={repo.length} height={1} style={{bg: 'white', fg: 'black'}} content={repo} />
+        <element top={0} right={1} width={full_name.length} height={1} style={{bg: 'white', fg: 'black'}} content={full_name} />
     </box>;
 }

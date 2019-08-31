@@ -45,13 +45,15 @@ export default (props: Props) => {
                 if(safe.edges.length) {
                     setItem(id(safeList(data).edges[0].node))
                 }
-            });
+            })
+            .catch(log)
     }, []);
 
     return <LoadingBoundary message={message}>
         {(data, meta) => {
             const plainList = safeList(data).edges.map(ii => ii.node);
-            const currentItem = plainList.find(ii => id(ii) === item);
+            const index = plainList.findIndex(ii => id(ii) === item);
+            const currentItem = plainList[index];
             return <>
                 <box
                     top={0}
@@ -66,6 +68,7 @@ export default (props: Props) => {
                     vi={true}
                     tags={true}
                     pad={0}
+                    selected={index + 1}
                     style={{
                         selected: {
                             fg: 'black',

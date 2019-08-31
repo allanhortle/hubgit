@@ -14,9 +14,10 @@ import Title from '../affordance/Title';
 
 
 export default (props) => {
+    const {owner, name} = props.repo;
     return <ListLayout
         request={Api.repo.pulls.useRequest}
-        payload={props.match.params}
+        payload={{owner, name}}
         id={get('number')}
         list={getIn(['repository', 'pullRequests'])}
         listHead={['#', 'Status', 'Name']}
@@ -49,11 +50,12 @@ function PullDescription({data}) {
         updatedAt,
         url
     } = data;
+    log(data);
     const description = body || 'No Description';
     const descriptionLines = description.split('\r').length;
 
     return <box mouse scrollable border="bg">
-        <listtable top={0} tags align="left" rows={[
+        <listtable top={0} tags height={8} align="left" rows={[
             ['changes:', `${green('+' + additions)} ${red('-' + deletions)}`],
             ['number: ', `#${number}`],
             ['state:', colorState(state)],

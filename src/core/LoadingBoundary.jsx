@@ -4,8 +4,7 @@ import {LoadingBoundary} from 'react-enty';
 export default function(props) {
     const {message, children} = props;
     return <LoadingBoundary
-        fallbackOnRefetch={true}
-        fallback={() => "Loading..."}
+        fallback={() => <box top={1} left={1}>Loading...</box>}
         error={() => <box
             border={{
                 type: 'line',

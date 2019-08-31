@@ -16,16 +16,16 @@ import {Markdown} from 'react-blessed-contrib';
 
 export default function RepoStructure(props) {
     const readme = Api.repo.readme.useRequest();
+    const {owner, name} = props.repo;
     useEffect(() => {
-        readme.onRequest(props.match.params)
+        readme.onRequest({owner, name})
     }, []);
 
     return <LoadingBoundary message={readme}>
         {(data) => {
-            log(data);
             const {homepageUrl, pullRequests, issues, stargazers, watchers, url, sshUrl, description, isArchived} = data.repository;;
             return <>
-                <Markdown mouse scrollable width={70} left="center">
+                <Markdown mouse scrollable width={70} left={1} top={1}>
                     {data.repository.object.text}
                 </Markdown>
             </>

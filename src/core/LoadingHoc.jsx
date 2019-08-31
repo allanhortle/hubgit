@@ -6,12 +6,13 @@ type Config = {
 };
 
 export default (config: Config) => (Component: *) => (props: *) => {
+    const pos = {top: 1, left: 1};
     return props[config.name]
         .requestState
-        .fetchingMap(() => <box>Loading...</box>)
-        .refetchingMap(() => <box>Loading...</box>)
+        .fetchingMap(() => <box {...pos}>Loading...</box>)
+        .refetchingMap(() => <box {...pos}>Loading...</box>)
         .successMap(() => <Component {...props} />)
-        .errorMap(() => <box>Error!</box>)
+        .errorMap(() => <box {...pos}>Error!</box>)
         .value();
 };
 

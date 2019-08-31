@@ -7,6 +7,7 @@ export default async (vars, query) => {
         headers: {
             authorization: `token ${process.env.GITHUB_TOKEN}`
         }
-    });
+    })
+        .catch(log);
 };
 

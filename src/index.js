@@ -30,7 +30,7 @@ program
             }
         }
 
-        CoreView(repoData, program);
+        CoreView({repoData, program});
     });
 
 

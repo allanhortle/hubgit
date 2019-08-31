@@ -3,17 +3,12 @@ import {EntityApi} from 'react-enty';
 import ApplicationSchema from './ApplicationSchema';
 import github from '../service/Github';
 
-const repo = ({owner, repo}, key, value) => ({repo: {
-    id: `${owner}/${repo}`,
-    [key]: value
-}});
-
 
 const Api = EntityApi({
     repo: {
         pulls: async (params) => github(params, `
-query ($owner: String!, $repo: String!) {
-  repository(owner: $owner, name: $repo) {
+query ($owner: String!, $name: String!) {
+  repository(owner: $owner, name: $name) {
     pullRequests(first: 50, orderBy: {field: UPDATED_AT, direction: DESC}) {
       edges {
         node {
@@ -74,8 +69,8 @@ query ($owner: String!, $repo: String!) {
         `),
 
         issues: async (params) => github(params, `
-query($owner: String!, $repo: String!) {
-  repository(owner: $owner, name: $repo) {
+query($owner: String!, $name: String!) {
+  repository(owner: $owner, name: $name) {
     issues(first: 50, orderBy: {field: CREATED_AT, direction: DESC}) {
       edges {
         node {
@@ -114,8 +109,8 @@ query($owner: String!, $repo: String!) {
         `),
 
         releases: async (params) => github(params, `
-query($owner: String!, $repo: String!) {
-  repository(owner: $owner, name: $repo) {
+query($owner: String!, $name: String!) {
+  repository(owner: $owner, name: $name) {
     releases(first: 50, orderBy: {field: CREATED_AT, direction: DESC}) {
       edges {
         node {
@@ -141,8 +136,8 @@ query($owner: String!, $repo: String!) {
         `),
 
         readme: async (params) => github(params, `
-query($owner: String!, $repo: String!) {
-    repository(owner: $owner, name: $repo) {
+query($owner: String!, $name: String!) {
+    repository(owner: $owner, name: $name) {
         object(expression: "master:README.md") {
             ... on Blob {
             text
@@ -153,8 +148,8 @@ query($owner: String!, $repo: String!) {
         `),
 
         repo: async (params) => github(params, `
-query($owner: String!, $repo: String!) {
-  repository(owner: $owner, name: $repo) {
+query($owner: String!, $name: String!) {
+  repository(owner: $owner, name: $name) {
     pullRequests(states:OPEN) {
       totalCount
     }

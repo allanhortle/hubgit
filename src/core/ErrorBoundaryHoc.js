@@ -19,7 +19,7 @@ const style = {
     }
 };
 
-export default () => (Component: *) => class ErrorBoundary extends React.Component<*, *> {
+export default () => (Component: *) => class ErrorBoundaryHoc extends React.Component<*, *> {
     constructor(props: {}) {
         super(props);
         this.state = {
