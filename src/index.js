@@ -10,10 +10,10 @@ import {red, gray} from 'chalk';
 
 program
     .version(pkg.version)
-    .arguments('[cmd]')
+    .arguments('[view] [viewIndex]')
     .option('-v, --verbose', 'be verbose')
     .option('-r, --repo <repo>', 'any repo like url or path. E.g: facebook/react, https://github.com/facebook/react')
-    .action(async (command, program) => {
+    .action(async (view, viewIndex, program) => {
         let repoData;
         if(program.repo) {
             repoData = gitUrlParse(program.repo);
@@ -30,7 +30,12 @@ program
             }
         }
 
-        CoreView({repoData, program});
+        CoreView({
+            view,
+            viewIndex,
+            repoData,
+            program
+        });
     });
 
 

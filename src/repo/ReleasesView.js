@@ -10,7 +10,9 @@ import pipeWith from 'unmutable/lib/util/pipeWith';
 import pipe from 'unmutable/lib/util/pipe';
 import {blue, red, green, magenta, grey, yellow} from '../util/tag';
 import ListLayout from '../affordance/ListLayout';
+import BlockLayout from '../affordance/BlockLayout';
 import Title from '../affordance/Title';
+import {Markdown} from 'react-blessed-contrib';
 
 
 export default (props) => {
@@ -36,17 +38,18 @@ export default (props) => {
 function PullDescription({data}) {
     const {tagName, isDraft, name, description = '', author, publishedAt,url} = data;
     const descriptionLines = description.split('\r').length;
+    const rowPadding = {top: 1, bottom: 1, left: 0, right: 0};
 
-    return <box mouse scrollable border="bg">
-        <listtable top={0} tags align="left" rows={[
+    return <BlockLayout mouse scrollable scrollbar border="bg">
+        <listtable tags align="left" height={5}  rows={[
             ['tag: ', isDraft ? red('DRAFT') : magenta(tagName)],
             ['name: ', name],
             ['opened by: ', yellow(author.login)],
             ['published:', `${publishedAt}`],
             ['url:', `${url}`],
         ]}/>
-        <Title top={8}>Description</Title>
-        <element top={10} height={descriptionLines} content={description} />
-    </box>;
+        <Title margin={rowPadding}>description</Title>
+        <Markdown key={description}>{description}</Markdown>
+    </BlockLayout>;
 }
 

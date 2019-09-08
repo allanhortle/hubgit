@@ -7,6 +7,7 @@ import PullrequestView from '../pullrequest/PullrequestView';
 import IssuesView from '../repo/IssuesView';
 import RepoView from '../repo/RepoView';
 import ReleasesView from '../repo/ReleasesView';
+import BlockLayout from '../affordance/BlockLayout';
 
 function content(view) {
     if(view === 'readme') return RepoView;
@@ -17,7 +18,7 @@ function content(view) {
 
 export default function CoreStructure(props) {
     const nav = useRef();
-    const {view, repo, setContext} = useCoreContext();
+    const {view, viewIndex, repo, setContext} = useCoreContext();
     const items = [
         'pulls',
         'issues',
@@ -29,11 +30,13 @@ export default function CoreStructure(props) {
     const {full_name} = repo;
 
     useEffect(() => {
-        nav.current.select(items.findIndex(ii => ii === view));
-    }, []);
+        const currentIndex = items.findIndex(ii => ii === view);
+        nav.current.select(currentIndex);
+    }, [view]);
+
     return <box>
         <box top={1} left={0} width="100%" height="100%-1">
-            <Content repo={repo} />
+            <Content repo={repo} view={view} viewIndex={viewIndex} />
         </box>
         <listbar
             ref={nav}
@@ -63,3 +66,5 @@ export default function CoreStructure(props) {
         <element top={0} right={1} width={full_name.length} height={1} style={{bg: 'white', fg: 'black'}} content={full_name} />
     </box>;
 }
+
+

@@ -9,6 +9,7 @@ import sortBy from 'unmutable/lib/sortBy';
 import pipeWith from 'unmutable/lib/util/pipeWith';
 import pipe from 'unmutable/lib/util/pipe';
 import {blue, red, green, magenta, grey, yellow} from '../util/tag';
+import BlockLayout from '../affordance/BlockLayout';
 
 type Props = {
     request: Function,
@@ -18,6 +19,7 @@ type Props = {
     listHead: string[],
     renderListItem: Function,
     itemView: ComponentType<any>,
+    initialValue: () => boolean,
     onSelect: Function
 };
 
@@ -28,68 +30,62 @@ export default (props: Props) => {
         id,
         list,
         listHead,
+        initialValue = () => true,
         renderListItem,
         itemView: ItemView,
         onSelect
     } = props;
 
-    const [item, setItem] = useState();
+    const [index, setIndex] = useState(null);
     const message = request();
-    const safeList = (data) => list(data) || {edges: []};
 
     useEffect(() => {
-        message
-            .onRequest(payload)
-            .then(data => {
-                const safe = safeList(data);
-                if(safe.edges.length) {
-                    setItem(id(safeList(data).edges[0].node))
-                }
-            })
-            .catch(log)
+        message.onRequest(payload);
     }, []);
 
     return <LoadingBoundary message={message}>
         {(data, meta) => {
-            const plainList = safeList(data).edges.map(ii => ii.node);
-            const index = plainList.findIndex(ii => id(ii) === item);
-            const currentItem = plainList[index];
-            return <>
+            const plainList = list(data).edges.map(ii => ii.node);
+            const initialIndex = plainList.findIndex(initialValue);
+            const selectedIndex = (index == null) ? initialIndex : index;
+            const currentItem = plainList[selectedIndex];
+
+            return <box>
                 <box
                     top={0}
                     width="40%"
                     border={{type: 'line', left: false, right: true, top: false, bottom: false}}
                 >
-                <listtable
-                    align="left"
-                    mouse={true}
-                    keys={true}
-                    focused={true}
-                    vi={true}
-                    tags={true}
-                    pad={0}
-                    selected={index + 1}
-                    style={{
-                        selected: {
-                            fg: 'black',
-                            bg: 'yellow'
-                        },
-                        scrollbar: {
-                            bg: 'blue'
-                        }
-                    }}
-                    rows={pipeWith(
-                        plainList,
-                        map(renderListItem),
-                        _ => [listHead].concat(_)
-                    )}
-                    onSelect={data => setItem(onSelect(data.content, data))}
-                />
+                    <listtable
+                        align="left"
+                        mouse={true}
+                        keys={true}
+                        focused={true}
+                        vi={true}
+                        tags={true}
+                        pad={0}
+                        selected={selectedIndex + 1}
+                        style={{
+                            selected: {
+                                fg: 'black',
+                                bg: 'yellow'
+                            },
+                            scrollbar: {
+                                bg: 'blue'
+                            }
+                        }}
+                        rows={pipeWith(
+                            plainList,
+                            map(renderListItem),
+                            _ => [listHead].concat(_)
+                        )}
+                        onSelect={(data, index) => setIndex(index - 1)}
+                    />
                 </box>
-                <box left="40%">
+                <box top={0} left="40%" height="100%" width="60%">
                     {currentItem && <ItemView data={currentItem} />}
                 </box>
-             </>;
+             </box>;
         }}
     </LoadingBoundary>;
 }

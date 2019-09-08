@@ -1367,15 +1367,17 @@ end-of-stream@^1.0.0, end-of-stream@^1.1.0:
   dependencies:
     once "^1.4.0"
 
-enty-state@^1.0.0-alpha.5:
-  version "1.0.0-alpha.5"
-  resolved "https://registry.yarnpkg.com/enty-state/-/enty-state-1.0.0-alpha.5.tgz#1921561c769941b8379e8d831d05be3cec3a7a50"
+enty-state@^1.0.0-alpha.6:
+  version "1.0.0-alpha.6"
+  resolved "https://registry.yarnpkg.com/enty-state/-/enty-state-1.0.0-alpha.6.tgz#96d742dbd5876a5b2c246e230e1d9a0941ca912e"
+  integrity sha512-Pa0xTuqlsxWMTpB52bg/+Bc1xOvqgpG2r0C4epbkOO+hPC+fkmViVtRJ81pLdjQzx1ki5K9S8QIV6r87UQZp0w==
   dependencies:
     unmutable "^0.46.0"
 
-enty@^1.0.0-alpha.5:
-  version "1.0.0-alpha.5"
-  resolved "https://registry.yarnpkg.com/enty/-/enty-1.0.0-alpha.5.tgz#8fed72906a91c94ddc5767ffd0c5c7a472c92514"
+enty@^1.0.0-alpha.6:
+  version "1.0.0-alpha.6"
+  resolved "https://registry.yarnpkg.com/enty/-/enty-1.0.0-alpha.6.tgz#e4006c7cc94c2912b7bb40024fc49264aa98cd68"
+  integrity sha512-3fcF7BZyURytU666XWudr+wWwlXO6Xj/BMm2jdwjetsTjbQ3vH4TCLfuBZUEWwv3qONnAttCBWOpQ5VocW1Syw==
   dependencies:
     unmutable "^0.46.0"
 
@@ -2710,12 +2712,13 @@ react-dom@^16.9.0:
     prop-types "^15.6.2"
     scheduler "^0.15.0"
 
-react-enty@^1.0.0-alpha.5:
-  version "1.0.0-alpha.5"
-  resolved "https://registry.yarnpkg.com/react-enty/-/react-enty-1.0.0-alpha.5.tgz#2971d30b9072c3791f3ce03417d91a9a696095d6"
+react-enty@^1.0.0-alpha.6:
+  version "1.0.0-alpha.6"
+  resolved "https://registry.yarnpkg.com/react-enty/-/react-enty-1.0.0-alpha.6.tgz#4b70092ed9c317b40f6f27ab8c4913388b65f016"
+  integrity sha512-5+jEtAgbxiegM5gjRFsT3gNRh+3GcsVHD6qhaflfljQbCxBJC12ggH6m7YU3BheWrGou4f3nPvrAqXWqxiqrtA==
   dependencies:
-    enty "^1.0.0-alpha.5"
-    enty-state "^1.0.0-alpha.5"
+    enty "^1.0.0-alpha.6"
+    enty-state "^1.0.0-alpha.6"
     unmutable "^0.46.0"
 
 react-is@^16.6.0, react-is@^16.7.0:

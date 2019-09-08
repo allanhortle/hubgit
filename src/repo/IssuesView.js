@@ -11,6 +11,8 @@ import pipe from 'unmutable/lib/util/pipe';
 import {blue, red, green, magenta, grey, yellow} from '../util/tag';
 import ListLayout from '../affordance/ListLayout';
 import Title from '../affordance/Title';
+import BlockLayout from '../affordance/BlockLayout';
+import TimelineItemArray from '../affordance/TimelineItemArray';
 
 
 export default (props) => {
@@ -35,15 +37,16 @@ export default (props) => {
 }
 
 function PullDescription({data}) {
-    const {state, body, number, author, createdAt, updatedAt, url, comments} = data;
+    const {state, body, number, author, createdAt, updatedAt, url, comments, timelineItems} = data;
     const description = body || 'No Description';
     const descriptionLines = description.split('\r').length;
     const labels = data.labels.edges
         .map(({node}) => `{#${node.color}-fg}${node.name}{/}`)
         .join(', ');
+    const rowPadding = {top: 1, bottom: 1, left: 0, right: 0};
 
-    return <box mouse scrollable border="bg">
-        <listtable top={0} tags align="left" rows={[
+    return <BlockLayout mouse scrollable scrollbar border="bg">
+        <listtable tags align="left" height={8}  rows={[
             ['state: ', colorState(state)],
             ['number: ', `#${number}`],
             ['opened by: ', yellow(author.login)],
@@ -52,20 +55,11 @@ function PullDescription({data}) {
             ['updated', `${updatedAt}`],
             ['url', `${url}`],
         ]}/>
-        <Title top={8}>Description</Title>
-        <element top={10} height={descriptionLines} content={description} />
-        <Title top={11 + descriptionLines}>Comments</Title>
-        <table
-            align="left"
-            top={13 + descriptionLines}
-            tags
-            rows={comments.edges.map(({node}) => [
-                yellow(node.author.login),
-                grey(node.createdAt),
-                '\n' + (node.body.replace(/^\s+|\s+$/g, ''))
-            ])}
-        />
-    </box>;
+        <Title margin={rowPadding}>Description</Title>
+        <box>{description}</box>
+        <Title margin={rowPadding}>Comments</Title>
+        {TimelineItemArray(timelineItems)}
+    </BlockLayout>;
 }
 
 function colorState(val) {

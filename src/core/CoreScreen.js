@@ -1,5 +1,6 @@
 // @flow
 import blessed from 'blessed';
+import util from 'util'
 
 const screen = blessed.screen({
     autoPadding: true,
@@ -17,6 +18,7 @@ screen.debugLog.left = 0;
 screen.key(['escape', 'q', 'C-c'], () => process.exit(0));
 
 global.log = (...val) => screen.debug(...val);
+global.inspect = (obj) => screen.debug(util.inspect(obj));
 
 
 export default screen;

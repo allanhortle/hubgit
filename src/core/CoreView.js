@@ -17,19 +17,21 @@ import PullrequestView from '../pullrequest/PullrequestView';
 type Props = {};
 type State = {
     view: string,
+    viewIndex: string,
     repo: {}
 };
 
 
 export default pipe(
-    ({repoData, program}) => composeWith(
+    ({repoData, program, view, viewIndex}) => composeWith(
         ErrorBoundaryHoc(),
         (Component) => class CoreView extends React.Component<Props, State> {
             constructor(props) {
                 super(props);
                 this.setContext = (data) => this.setState(data);
                 this.state = {
-                    view: program.args[0],
+                    view,
+                    viewIndex,
                     repo: repoData,
                     setContext: this.setContext
                 };

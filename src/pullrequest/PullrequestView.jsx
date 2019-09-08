@@ -9,17 +9,24 @@ import sortBy from 'unmutable/lib/sortBy';
 import pipeWith from 'unmutable/lib/util/pipeWith';
 import pipe from 'unmutable/lib/util/pipe';
 import {blue, red, green, magenta, grey, yellow} from '../util/tag';
+import {mapNodes} from '../util/edgeList';
 import ListLayout from '../affordance/ListLayout';
+import BlockLayout from '../affordance/BlockLayout';
 import Title from '../affordance/Title';
+import flatMap from 'unmutable/flatMap';
+import TimelineItemArray from '../affordance/TimelineItemArray';
 
 
 export default (props) => {
+    const {viewIndex} = props;
     const {owner, name} = props.repo;
+
     return <ListLayout
         request={Api.repo.pulls.useRequest}
         payload={{owner, name}}
         id={get('number')}
         list={getIn(['repository', 'pullRequests'])}
+        initialValue={item => item.number == viewIndex}
         listHead={['#', 'Status', 'Name']}
         renderListItem={ii => [
             `${ii.number}`,
@@ -27,12 +34,9 @@ export default (props) => {
             ii.title
         ]}
         itemView={PullDescription}
-        onSelect={content => {
-            const match = content.match(/^(\d*)/) || [];
-            return parseInt(match[1], 10);
-        }}
     />;
 }
+
 
 function PullDescription({data}) {
     const {
@@ -45,46 +49,33 @@ function PullDescription({data}) {
         deletions,
         headRefName,
         number,
-        reviewThreads,
+        timelineItems,
         state,
         updatedAt,
         url
     } = data;
-    log(data);
     const description = body || 'No Description';
     const descriptionLines = description.split('\r').length;
+    const rowPadding = {top: 1, bottom: 1, left: 0, right: 0};
+    const bottomPadding = {top: 0, bottom: 1, left: 0, right: 0};
 
-    return <box mouse scrollable border="bg">
-        <listtable top={0} tags height={8} align="left" rows={[
+
+    return <BlockLayout mouse scrollable scrollbar border="bg">
+        <listtable tags align="left" height={8}  rows={[
             ['changes:', `${green('+' + additions)} ${red('-' + deletions)}`],
             ['number: ', `#${number}`],
             ['state:', colorState(state)],
             ['opened by:', yellow(author.login)],
             ['merge:', `${blue(headRefName)} into ${blue(baseRefName)}`],
+            ['url:', `${url}`],
             ['created:', `${createdAt}`],
             ['updated:', `${updatedAt}`],
-            ['url:', `${url}`],
         ]}/>
-        <Title top={9}>Description</Title>
-        <element top={11} height={descriptionLines} content={description} />
-        <Title top={12 + descriptionLines}>Comments</Title>
-        <table
-            align="left"
-            top={14 + descriptionLines}
-            tags
-            rows={comments.edges.map(({node}) => [
-                yellow(node.author.login),
-                grey(node.createdAt),
-                '\n' + (node.body.replace(/^\s+|\s+$/g, ''))
-            ]).concat(...reviewThreads.edges.map(({node}) => [
-                ...node.comments.edges.map(({node}) => [
-                    yellow(node.author.login),
-                    grey(node.createdAt),
-                    '\n' + node.body
-                ])
-            ]))}
-        />
-    </box>;
+        <Title margin={rowPadding}>Description</Title>
+        <box>{description}</box>
+        <Title margin={rowPadding}>Comments</Title>
+        {TimelineItemArray(timelineItems)}
+    </BlockLayout>;
 }
 
 function colorState(val) {
@@ -99,3 +90,4 @@ function colorState(val) {
             return val;
     }
 }
+

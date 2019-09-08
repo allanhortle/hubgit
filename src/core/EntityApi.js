@@ -3,10 +3,29 @@ import {EntityApi} from 'react-enty';
 import ApplicationSchema from './ApplicationSchema';
 import github from '../service/Github';
 
+const takeFirst = (request) => {
+    let current;
+    return async (...args) => {
+        if(current) {
+            return current.then(
+                response => {
+                    current = null;
+                    return response;
+                },
+                err => {
+                    current = null;
+                    throw err
+                }
+            );
+        }
+        current = request(...args);
+        return current;
+    }
+};
 
 const Api = EntityApi({
     repo: {
-        pulls: async (params) => github(params, `
+        pulls: takeFirst((params) => github(params, `
 query ($owner: String!, $name: String!) {
   repository(owner: $owner, name: $name) {
     pullRequests(first: 50, orderBy: {field: UPDATED_AT, direction: DESC}) {
@@ -27,37 +46,43 @@ query ($owner: String!, $name: String!) {
           }
           additions
           deletions
-          reviewThreads(first: 10) {
+          timelineItems(last: 50, itemTypes: [PULL_REQUEST_REVIEW, ISSUE_COMMENT]) {
             edges {
               node {
-                id
-                isResolved
-                comments(first: 10) {
-                  edges {
-                    node {
-                      path
-                      diffHunk
-                      body
-                      author {
-                        login
+                __typename
+                ... on PullRequestReview {
+                  id
+                  state
+                  createdAt
+                  body
+                  author {
+                    login
+                  }
+                  comments(last: 20) {
+                    edges {
+                      node {
+                        id
+                        __typename
+                        diffHunk
+                        outdated
+                        path
+                        author {
+                          login
+                        }
+                        createdAt
+                        body
                       }
-                      createdAt
                     }
                   }
                 }
-              }
-            }
-          }
-          comments(first: 25) {
-            totalCount
-            edges {
-              node {
-                id
-                author {
-                  login
+                ... on IssueComment {
+                  id
+                  body
+                  createdAt
+                  author {
+                    login
+                  }
                 }
-                body
-                createdAt
               }
             }
           }
@@ -66,9 +91,9 @@ query ($owner: String!, $name: String!) {
     }
   }
 }
-        `),
+        `)),
 
-        issues: async (params) => github(params, `
+        issues: takeFirst((params) => github(params, `
 query($owner: String!, $name: String!) {
   repository(owner: $owner, name: $name) {
     issues(first: 50, orderBy: {field: CREATED_AT, direction: DESC}) {
@@ -83,13 +108,18 @@ query($owner: String!, $name: String!) {
           updatedAt
           url
           author {login}
-          comments(first:100) {
+          timelineItems(last: 50, itemTypes: [ISSUE_COMMENT]) {
             edges {
               node {
-                id
-                author {login}
-                body
-                createdAt
+                __typename
+                ... on IssueComment {
+                  id
+                  body
+                  createdAt
+                  author {
+                    login
+                  }
+                }
               }
             }
           }
@@ -106,9 +136,9 @@ query($owner: String!, $name: String!) {
     }
   }
 }
-        `),
+        `)),
 
-        releases: async (params) => github(params, `
+        releases: takeFirst((params) => github(params, `
 query($owner: String!, $name: String!) {
   repository(owner: $owner, name: $name) {
     releases(first: 50, orderBy: {field: CREATED_AT, direction: DESC}) {
@@ -133,9 +163,9 @@ query($owner: String!, $name: String!) {
     }
   }
 }
-        `),
+        `)),
 
-        readme: async (params) => github(params, `
+        readme: takeFirst((params) => github(params, `
 query($owner: String!, $name: String!) {
     repository(owner: $owner, name: $name) {
         object(expression: "master:README.md") {
@@ -145,9 +175,9 @@ query($owner: String!, $name: String!) {
         }
     }
 }
-        `),
+        `)),
 
-        repo: async (params) => github(params, `
+        repo: takeFirst((params) => github(params, `
 query($owner: String!, $name: String!) {
   repository(owner: $owner, name: $name) {
     pullRequests(states:OPEN) {
@@ -174,7 +204,7 @@ query($owner: String!, $name: String!) {
     }
   }
 }
-        `),
+        `)),
 
     }
 }, ApplicationSchema);
