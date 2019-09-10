@@ -49,11 +49,13 @@ export default (props: Props) => {
             const initialIndex = plainList.findIndex(initialValue);
             const selectedIndex = (index == null) ? initialIndex : index;
             const currentItem = plainList[selectedIndex];
+            log(plainList)
 
-            return <box>
+            return <box height="100%">
                 <box
                     top={0}
                     width="40%"
+                    height="100%"
                     border={{type: 'line', left: false, right: true, top: false, bottom: false}}
                 >
                     <listtable
@@ -64,6 +66,8 @@ export default (props: Props) => {
                         vi={true}
                         tags={true}
                         pad={0}
+                        height="100%"
+                        width="100%"
                         selected={selectedIndex + 1}
                         style={{
                             selected: {
