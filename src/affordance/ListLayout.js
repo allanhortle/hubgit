@@ -8,12 +8,15 @@ import map from 'unmutable/lib/map';
 import sortBy from 'unmutable/lib/sortBy';
 import pipeWith from 'unmutable/lib/util/pipeWith';
 import pipe from 'unmutable/lib/util/pipe';
+import keyBy from 'unmutable/keyBy';
 import {blue, red, green, magenta, grey, yellow} from '../util/tag';
 import BlockLayout from '../affordance/BlockLayout';
 
 type Props = {
-    request: Function,
-    payload: Object,
+    itemRequest: Function,
+    listRequest: Function,
+    repo: {owner: string, name: string},
+    number: number,
     id: Function,
     list: Function,
     listHead: string[],
@@ -25,10 +28,12 @@ type Props = {
 
 export default (props: Props) => {
     const {
-        request,
-        payload,
+        itemRequest,
+        listRequest,
+        repo,
         id,
         list,
+        item,
         listHead,
         initialValue = () => true,
         renderListItem,
@@ -37,28 +42,26 @@ export default (props: Props) => {
     } = props;
 
     const [index, setIndex] = useState(null);
-    const message = request();
+    const [number, setNumber] = useState(props.number);
+    const listMessage = listRequest();
+
 
     useEffect(() => {
-        message.onRequest(payload);
+        listMessage.onRequest(repo);
     }, []);
 
-    return <LoadingBoundary message={message}>
-        {(data, meta) => {
-            const plainList = list(data).edges.map(ii => ii.node);
-            const initialIndex = plainList.findIndex(initialValue);
-            const selectedIndex = (index == null) ? initialIndex : index;
-            const currentItem = plainList[selectedIndex];
-            log(plainList)
+    return <box>
+        <box
+            top={0}
+            width="40%"
+            height="100%"
+        >
+            <LoadingBoundary message={listMessage}>
+                {(data) => {
+                    const plainList = list(data).edges.map(ii => ii.node);
+                    const numberIndex = plainList.findIndex(ii => id(ii) == number);
 
-            return <box height="100%">
-                <box
-                    top={0}
-                    width="40%"
-                    height="100%"
-                    border={{type: 'line', left: false, right: true, top: false, bottom: false}}
-                >
-                    <listtable
+                    return <listtable
                         align="left"
                         mouse={true}
                         keys={true}
@@ -68,7 +71,7 @@ export default (props: Props) => {
                         pad={0}
                         height="100%"
                         width="100%"
-                        selected={selectedIndex + 1}
+                        selected={index}
                         style={{
                             selected: {
                                 fg: 'black',
@@ -83,14 +86,34 @@ export default (props: Props) => {
                             map(renderListItem),
                             _ => [listHead].concat(_)
                         )}
-                        onSelect={(data, index) => setIndex(index - 1)}
-                    />
-                </box>
-                <box top={0} left="40%" height="100%" width="60%">
-                    {currentItem && <ItemView data={currentItem} />}
-                </box>
-             </box>;
-        }}
-    </LoadingBoundary>;
+                        onSelectItem={(_, nextIndex) => log('setIndex', index, numberIndex) || setIndex(!index ? numberIndex+1 : nextIndex)}
+                        onSelect={(_, index) => setNumber(id(plainList[index -1]))}
+                    />;
+                }}
+            </LoadingBoundary>
+        </box>
+        <box top={0} left="40%+1" height="100%" width="60%-1">
+            {number && <Item
+                number={number}
+                repo={repo}
+                itemRequest={itemRequest}
+                ItemView={ItemView}
+                item={item}
+            />}
+        </box>
+        <line height="100%" orientation="vertical" left="40%" />
+    </box>;
 }
 
+function Item(props) {
+    const {number, repo: {owner, name}, ItemView, itemRequest, item} = props;
+    const message = itemRequest();
+
+    useEffect(() => {
+        message.onRequest({number: parseInt(number), owner, name});
+    }, [number]);
+
+    return <LoadingBoundary message={message}>
+        {(data) => <ItemView data={item(data)} />}
+    </LoadingBoundary>;
+}

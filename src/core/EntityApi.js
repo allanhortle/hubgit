@@ -2,6 +2,8 @@
 import {EntityApi} from 'react-enty';
 import ApplicationSchema from './ApplicationSchema';
 import github from '../service/Github';
+import PullQuery from './data/PullQuery';
+import PullListQuery from './data/PullListQuery';
 
 const takeFirst = (request) => {
     let current;
@@ -25,75 +27,10 @@ const takeFirst = (request) => {
 
 const Api = EntityApi({
     repo: {
-        pulls: takeFirst((params) => github(params, `
-query ($owner: String!, $name: String!) {
-  repository(owner: $owner, name: $name) {
-    pullRequests(first: 50, orderBy: {field: UPDATED_AT, direction: DESC}) {
-      edges {
-        node {
-          id
-          number
-          title
-          body
-          state
-          baseRefName
-          headRefName
-          createdAt
-          updatedAt
-          url
-          author {
-            login
-          }
-          additions
-          deletions
-          timelineItems(last: 50, itemTypes: [PULL_REQUEST_REVIEW, ISSUE_COMMENT]) {
-            edges {
-              node {
-                __typename
-                ... on PullRequestReview {
-                  id
-                  state
-                  createdAt
-                  body
-                  author {
-                    login
-                  }
-                  comments(last: 20) {
-                    edges {
-                      node {
-                        id
-                        __typename
-                        diffHunk
-                        outdated
-                        path
-                        author {
-                          login
-                        }
-                        createdAt
-                        body
-                      }
-                    }
-                  }
-                }
-                ... on IssueComment {
-                  id
-                  body
-                  createdAt
-                  author {
-                    login
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}
-        `)),
+        pull: takeFirst((params) => github('pull', params, PullQuery)),
+        pullList: takeFirst((params) => github('pullList', params, PullListQuery)),
 
-        issues: takeFirst((params) => github(params, `
+        issues: takeFirst((params) => github('issueList', params, `
 query($owner: String!, $name: String!) {
   repository(owner: $owner, name: $name) {
     issues(first: 50, orderBy: {field: CREATED_AT, direction: DESC}) {
@@ -138,7 +75,7 @@ query($owner: String!, $name: String!) {
 }
         `)),
 
-        releases: takeFirst((params) => github(params, `
+        releases: takeFirst((params) => github('releaseList', params, `
 query($owner: String!, $name: String!) {
   repository(owner: $owner, name: $name) {
     releases(first: 50, orderBy: {field: CREATED_AT, direction: DESC}) {
@@ -165,7 +102,7 @@ query($owner: String!, $name: String!) {
 }
         `)),
 
-        readme: takeFirst((params) => github(params, `
+        readme: takeFirst((params) => github('readme', params, `
 query($owner: String!, $name: String!) {
     repository(owner: $owner, name: $name) {
         object(expression: "master:README.md") {
@@ -175,36 +112,7 @@ query($owner: String!, $name: String!) {
         }
     }
 }
-        `)),
-
-        repo: takeFirst((params) => github(params, `
-query($owner: String!, $name: String!) {
-  repository(owner: $owner, name: $name) {
-    pullRequests(states:OPEN) {
-      totalCount
-    }
-    issues(states: OPEN) {
-      totalCount
-    }
-    stargazers {
-      totalCount
-    }
-    watchers {
-      totalCount
-    }
-    url
-    sshUrl
-    description
-    homepageUrl
-    isArchived
-   object(expression: "master:README.md") {
-      ... on Blob {
-        text
-      }
-    }
-  }
-}
-        `)),
+        `))
 
     }
 }, ApplicationSchema);

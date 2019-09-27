@@ -4,7 +4,7 @@ import {LoadingBoundary} from 'react-enty';
 export default function(props) {
     const {message, children} = props;
     return <LoadingBoundary
-        fallback={() => <box width="100%" height="100%" top={1} left={1}>Loading...</box>}
+        fallback={() => <box width="100%" height="100%">Loading...</box>}
         error={() => <box
             height="100%"
             width="100%"

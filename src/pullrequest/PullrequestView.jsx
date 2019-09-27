@@ -22,11 +22,13 @@ export default (props) => {
     const {owner, name} = props.repo;
 
     return <ListLayout
-        request={Api.repo.pulls.useRequest}
-        payload={{owner, name}}
+        itemRequest={Api.repo.pull.useRequest}
+        listRequest={Api.repo.pullList.useRequest}
+        repo={{owner, name}}
+        number={viewIndex}
         id={get('number')}
         list={getIn(['repository', 'pullRequests'])}
-        initialValue={item => item.number == viewIndex}
+        item={getIn(['repository', 'pullRequest'])}
         listHead={['#', 'Status', 'Name']}
         renderListItem={ii => [
             `${ii.number}`,
