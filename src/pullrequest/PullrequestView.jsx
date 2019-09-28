@@ -8,7 +8,7 @@ import map from 'unmutable/lib/map';
 import sortBy from 'unmutable/lib/sortBy';
 import pipeWith from 'unmutable/lib/util/pipeWith';
 import pipe from 'unmutable/lib/util/pipe';
-import {blue, red, green, magenta, grey, yellow} from '../util/tag';
+import {blue, red, green, magenta, grey, yellow, black, title, split, left, right, center, whiteBg} from '../util/tag';
 import {mapNodes} from '../util/edgeList';
 import ListLayout from '../affordance/ListLayout';
 import BlockLayout from '../affordance/BlockLayout';
@@ -55,7 +55,8 @@ function PullDescription({data}) {
         timelineItems,
         state,
         updatedAt,
-        url
+        url,
+        title
     } = data;
     const description = body || 'No Description';
     const descriptionLines = description.split('\r').length;
@@ -63,10 +64,10 @@ function PullDescription({data}) {
     const bottomPadding = {top: 0, bottom: 1, left: 0, right: 0};
 
 
-    return <BlockLayout mouse scrollable scrollbar border="bg">
-        <listtable tags align="left" height={8}  rows={[
+    return <box border scrollable mouse height="100%" bottom={0} top={0}>
+        <box height={1} content={`#${number} ${title}`}/>
+        <listtable tags align="left" height={8} top={2} rows={[
             ['changes:', `${green('+' + additions)} ${red('-' + deletions)}`],
-            ['number: ', `#${number}`],
             ['state:', colorState(state)],
             ['opened by:', yellow(author.login)],
             ['merge:', `${blue(headRefName)} into ${blue(baseRefName)}`],
@@ -74,12 +75,20 @@ function PullDescription({data}) {
             ['created:', `${createdAt}`],
             ['updated:', `${updatedAt}`],
         ]}/>
+        <box tags top={10} shrink content={[
+            description,
+            ...TimelineItemArray(timelineItems)
+        ].join('\n')}/>
+    </box>
+    return <BlockLayout mouse scrollable scrollbar border="bg">
         <Title margin={rowPadding}>Description</Title>
         <box>{description}</box>
         <Title margin={rowPadding}>Comments</Title>
         {TimelineItemArray(timelineItems)}
     </BlockLayout>;
 }
+
+
 
 function colorState(val) {
     switch(val) {

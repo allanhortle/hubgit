@@ -16,8 +16,8 @@ import Title from '../affordance/Title';
 import flatMap from 'unmutable/flatMap';
 
 function Item(item, left = 0) {
-    const bottomPadding = {top: 0, bottom: 1, left: 0, right: 0};
     const {author, createdAt, state, body, comments, __typename, id, diffHunk, outdated, path} = item;
+    const leftPadding = ' '.repeat(left);
     switch (__typename) {
         case 'PullRequestReview': {
             let color = 'blue';
@@ -25,16 +25,21 @@ function Item(item, left = 0) {
             if(state === 'CHANGES_REQUESTED') color = 'red';
 
             return [
-                <box key={id} tags content={`{${color}-fg}${author.login} ${state} at ${createdAt}{/}`}/>,
-                <box padding={{left, bottom: 1, right: 0, top: 0}} key={id + 'body'}>{body}</box>
-            ].concat(mapNodes(comments, item => Item(item, 4)))
+                leftPadding + `{${color}-fg}${author.login} ${state} at ${createdAt}{/}`,
+                leftPadding + body,
+                ...pipeWith(
+                    comments.edges,
+                    map(get('node')),
+                    flatMap(item => Item(item, 0))
+                )
+            ];
         }
 
         case 'IssueComment':
             return [
-                <box padding={{left, bottom: 0, right: 0, top: 0}} key={id} tags content={`${yellow(author.login)} ${grey(createdAt)}`}/>,
-                <box padding={{left, bottom: 1, right: 0, top: 0}} key={id + 'body'}>{body}</box>
-            ];
+                leftPadding + `${yellow(author.login)} ${grey(createdAt)}`,
+                leftPadding + body
+            ]
 
         case 'PullRequestReviewComment': {
             let outdatedText = outdated ? grey('OUTDATED') : ''
@@ -42,13 +47,13 @@ function Item(item, left = 0) {
                 if(line[0] === '+') return green(line);
                 if(line[0] === '-') return red(line);
                 return line;
-            }).join('\n');
+            }).join('\n' + leftPadding);
             return [
-                <box padding={{left, bottom: 0, right: 0, top: 0}} key={id} tags content={`${yellow(author.login)} ${grey(createdAt)} ${outdatedText}`}/>,
-                <box padding={{left, bottom: 0, right: 0, top: 0}} key={id + 'path'} tags content={grey(path)} />,
-                <box padding={{left, bottom: 0, right: 0, top: 0}} key={id + 'diff'} tags content={code} width="100%"/>,
-                <box padding={{left, bottom: 1, right: 0, top: 0}} key={id + 'body'}>{body}</box>
-            ];
+                leftPadding + `${yellow(author.login)} ${grey(createdAt)} ${outdatedText} ${grey(path)}`,
+                leftPadding + body,
+                //leftPadding + code,
+                ' '
+            ]
         }
 
         default:
@@ -61,6 +66,7 @@ export default function TimelineItemArray(timelineItems) {
         timelineItems.edges,
         map(get('node')),
         sortBy(get('createdAt')),
-        flatMap((item, index) => Item(item))
+        flatMap((item, index) => Item(item)),
+        _ => log(_) || _
     );
 }
