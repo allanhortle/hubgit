@@ -16,12 +16,17 @@ import TimelineItemArray from '../affordance/TimelineItemArray';
 
 
 export default (props) => {
+    const {viewIndex} = props;
     const {name, owner} = props.repo;
     return <ListLayout
-        request={Api.repo.issues.useRequest}
-        payload={{name, owner}}
+        itemRequest={Api.repo.issue.useRequest}
+        listRequest={Api.repo.issueList.useRequest}
+        listPayload={{owner, name}}
+        itemPayload={number => ({number: parseInt(number), owner, name})}
+        itemId={viewIndex}
         id={get('number')}
         list={getIn(['repository', 'issues'])}
+        item={getIn(['repository', 'issue'])}
         listHead={['#', 'Status', 'Name']}
         renderListItem={ii => [
             `${ii.number}`,
@@ -29,10 +34,6 @@ export default (props) => {
             ii.title
         ]}
         itemView={PullDescription}
-        onSelect={content => {
-            const match = content.match(/^(\d*)/) || [];
-            return parseInt(match[1], 10);
-        }}
     />;
 }
 

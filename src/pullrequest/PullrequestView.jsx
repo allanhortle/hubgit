@@ -24,8 +24,9 @@ export default (props) => {
     return <ListLayout
         itemRequest={Api.repo.pull.useRequest}
         listRequest={Api.repo.pullList.useRequest}
-        repo={{owner, name}}
-        number={viewIndex}
+        listPayload={{owner, name}}
+        itemPayload={number => ({number: parseInt(number), owner, name})}
+        itemId={viewIndex}
         id={get('number')}
         list={getIn(['repository', 'pullRequests'])}
         item={getIn(['repository', 'pullRequest'])}

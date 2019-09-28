@@ -16,22 +16,22 @@ import {Markdown} from 'react-blessed-contrib';
 
 
 export default (props) => {
-    const {name, owner} = props.repo;
+    const {viewIndex, repo: {name, owner}} = props;
     return <ListLayout
-        request={Api.repo.releases.useRequest}
-        payload={{name, owner}}
+        itemRequest={Api.repo.release.useRequest}
+        listRequest={Api.repo.releaseList.useRequest}
+        listPayload={{owner, name}}
+        itemPayload={tagName => ({tagName, owner, name})}
+        itemId={viewIndex}
         id={get('tagName')}
         list={getIn(['repository', 'releases'])}
+        item={getIn(['repository', 'release'])}
         listHead={['Tag', 'Name']}
         renderListItem={ii => [
             ii.tagName,
             ii.name
         ]}
         itemView={PullDescription}
-        onSelect={content => {
-            const match = content.match(/^(.*?)\s/) || [];
-            return match[1];
-        }}
     />;
 }
 

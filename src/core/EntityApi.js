@@ -4,6 +4,10 @@ import ApplicationSchema from './ApplicationSchema';
 import github from '../service/Github';
 import PullQuery from './data/PullQuery';
 import PullListQuery from './data/PullListQuery';
+import IssueQuery from './data/IssueQuery';
+import IssueListQuery from './data/IssueListQuery';
+import ReleaseQuery from './data/ReleaseQuery';
+import ReleaseListQuery from './data/ReleaseListQuery';
 
 const takeFirst = (request) => {
     let current;
@@ -29,78 +33,12 @@ const Api = EntityApi({
     repo: {
         pull: takeFirst((params) => github('pull', params, PullQuery)),
         pullList: takeFirst((params) => github('pullList', params, PullListQuery)),
+        issue: takeFirst((params) => github('issue', params, IssueQuery)),
+        issueList: takeFirst((params) => github('issueList', params, IssueListQuery)),
+        release: takeFirst((params) => github('release', params, ReleaseQuery)),
+        releaseList: takeFirst((params) => github('releaseList', params, ReleaseListQuery)),
 
-        issues: takeFirst((params) => github('issueList', params, `
-query($owner: String!, $name: String!) {
-  repository(owner: $owner, name: $name) {
-    issues(first: 50, orderBy: {field: CREATED_AT, direction: DESC}) {
-      edges {
-        node {
-          id
-          number
-          title
-          body
-          state
-          createdAt
-          updatedAt
-          url
-          author {login}
-          timelineItems(last: 50, itemTypes: [ISSUE_COMMENT]) {
-            edges {
-              node {
-                __typename
-                ... on IssueComment {
-                  id
-                  body
-                  createdAt
-                  author {
-                    login
-                  }
-                }
-              }
-            }
-          }
-          labels(first: 10) {
-            edges {
-              node {
-                color
-                name
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}
-        `)),
-
-        releases: takeFirst((params) => github('releaseList', params, `
-query($owner: String!, $name: String!) {
-  repository(owner: $owner, name: $name) {
-    releases(first: 50, orderBy: {field: CREATED_AT, direction: DESC}) {
-      edges {
-        node {
-          id
-          createdAt
-          updatedAt
-          isDraft
-        isPrerelease
-          url
-          author {login}
-          tagName
-          tag {
-            id
-          }
-          name
-          description
-          publishedAt
-        }
-      }
-    }
-  }
-}
-        `)),
+        //releases: takeFirst((params) => github('releaseList', params, `
 
         readme: takeFirst((params) => github('readme', params, `
 query($owner: String!, $name: String!) {
