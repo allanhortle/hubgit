@@ -25,14 +25,9 @@ export default function CoreStructure(props) {
         'readme',
         'releases',
     ];
-    const navigate = (view) => setContext({view});
     const Content = content(view);
     const {full_name} = repo;
-
-    useEffect(() => {
-        const currentIndex = items.findIndex(ii => ii === view);
-        nav.current.select(currentIndex);
-    }, [view]);
+    const currentIndex = items.findIndex(ii => ii === view);
 
     return <box>
         <box top={1} left={0} width="100%" height="100%-1">
@@ -41,11 +36,22 @@ export default function CoreStructure(props) {
         <listbar
             ref={nav}
             autoCommandKeys
-            mouse={true}
             keys={true}
-            left={0}
+            mouse={true}
             height={1}
-            top={0}
+            selected={2}
+            onSelectItem={(_, index) => {
+                // @hack: work around for blessed reselecting the first item
+                // on mouse events
+                if(index !== currentIndex && nav.current) {
+                    nav.current.select(currentIndex);
+                }
+            }}
+            items={items.map((text, index) => ({
+                prefix: index + 1,
+                text,
+                callback: () => setContext({view: text})
+            }))}
             style={{
                 bg: 'white',
                 fg: 'black',
@@ -54,14 +60,10 @@ export default function CoreStructure(props) {
                     bg: 'white'
                 },
                 selected: {
-                    fg: 'yellow',
-                    bg: 'black'
+                    fg: 'black',
+                    bg: 'yellow'
                 }
             }}
-            items={items.reduce((rr, ii) => {
-                rr[ii] = () => navigate(ii);
-                return rr;
-            }, {})}
         />
         <element top={0} right={1} width={full_name.length} height={1} style={{bg: 'white', fg: 'black'}} content={full_name} />
     </box>;
