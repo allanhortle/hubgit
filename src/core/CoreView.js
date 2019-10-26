@@ -1,4 +1,6 @@
 // @flow
+import type {ComponentType} from 'react';
+
 import React, {createContext} from 'react';
 import composeWith from 'unmutable/lib/util/composeWith';
 import pipe from 'unmutable/lib/util/pipe';
@@ -6,13 +8,17 @@ import {render} from 'react-blessed';
 
 import Api from './EntityApi';
 import CoreStructure from './CoreStructure';
-import CoreScreen, {initScreen} from './CoreScreen';
+import CoreScreen from './CoreScreen';
 import MemoryRouterHoc from './MemoryRouterHoc';
 import ErrorBoundaryHoc from './ErrorBoundaryHoc';
 import CoreContext from './CoreContext';
+import update from 'unmutable/update';
 
+import PullrequestItem from '../pullrequest/PullrequestItem';
+import PullrequestList from '../pullrequest/PullrequestList';
+import IssuesView from '../repo/IssuesView';
 import RepoView from '../repo/RepoView';
-import PullrequestView from '../pullrequest/PullrequestView';
+import ReleasesView from '../repo/ReleasesView';
 
 type Props = {};
 type State = {
@@ -22,6 +28,40 @@ type State = {
 };
 
 
+type StackItem = {
+    component: React.ComponentType<any>,
+    props: mixed
+};
+
+class Stack {
+    _data: Array<StackItem>;
+    constructor(data: Array<StackItem>) {
+        this._data = data;
+    }
+    push(item: StackItem) {
+        return new Stack([...this._data, item]);
+    }
+    pop() {
+        return new Stack(this._data.slice(0, -1));
+    }
+    get last() {
+        return this._data.slice(this._data.length - 1);
+    }
+    get length() {
+        return this._data.length;
+    }
+}
+
+function content(view, viewIndex, repo) {
+    const item = (component) => ({component, props: {view, viewIndex, repo}});
+    if(view === 'readme') return item(RepoView);
+    if(view === 'releases') return item(ReleasesView);
+    if(view === 'pulls' || view === 'pull') {
+        return item(viewIndex ? PullrequestItem : PullrequestList);
+    }
+    return item(() => <box>404 View not found</box>);
+}
+
 export default pipe(
     ({repoData, program, view, viewIndex}) => composeWith(
         ErrorBoundaryHoc(),
@@ -29,11 +69,25 @@ export default pipe(
             constructor(props) {
                 super(props);
                 this.setContext = (data) => this.setState(data);
+                const pushStack = (component, props) => this.setState(update('stack', _ => _.push({component, props})));
+                const popStack = () => this.setState(update('stack', _ => _.pop()));
+
+                CoreScreen.key(['q'], () => {
+                    if(this.state.stack.length === 1) {
+                        return process.exit(0);
+                    }
+                    popStack();
+                });
+
+
                 this.state = {
+                    stack: new Stack([content(view, viewIndex, repoData)]),
                     view,
                     viewIndex,
                     repo: repoData,
-                    setContext: this.setContext
+                    setContext: this.setContext,
+                    pushStack,
+                    popStack
                 };
             }
             render() {

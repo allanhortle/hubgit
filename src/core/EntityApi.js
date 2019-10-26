@@ -31,7 +31,7 @@ const takeFirst = (request) => {
 
 const Api = EntityApi({
     repo: {
-        pull: takeFirst((params) => github('pull', params, PullQuery)),
+        pullItem: takeFirst((params) => github('pull', params, PullQuery)),
         pullList: takeFirst((params) => github('pullList', params, PullListQuery)),
         issue: takeFirst((params) => github('issue', params, IssueQuery)),
         issueList: takeFirst((params) => github('issueList', params, IssueListQuery)),

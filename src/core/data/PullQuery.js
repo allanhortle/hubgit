@@ -15,16 +15,76 @@ query ($owner: String!, $name: String!, $number: Int!) {
             title
             updatedAt
             url
-            timelineItems(last: 50, itemTypes: [PULL_REQUEST_REVIEW, ISSUE_COMMENT]) {
+            timelineItems(last: 50) {
                 edges { node {
                     __typename
+                    ... on PullRequestCommit {
+                      commit {
+                        id
+                        committedDate
+                        authoredDate
+                        author {user {login}}
+                        message
+                        oid
+                      }
+                    }
+                    ... on HeadRefForcePushedEvent {
+                      createdAt
+                      ref {name}
+                      beforeCommit {abbreviatedOid}
+                      afterCommit {abbreviatedOid}
+                      actor {login}
+                    }
+                    ... on MergedEvent {
+                      createdAt
+                      mergeRefName
+                      commit {abbreviatedOid}
+                      actor {login}
+                    }
+                    ... on ClosedEvent {
+                      createdAt
+                      actor {login}
+                    }
+                    ... on HeadRefDeletedEvent {
+                      actor {login}
+                      createdAt
+                      headRefName
+                    }
+                    ... on ReferencedEvent {
+                      actor {login}
+                      createdAt
+                      commit {message}
+                    }
+                    ... on CrossReferencedEvent  {
+                      actor {login}
+                      createdAt
+                      source {
+                        ... on PullRequest {
+                          title
+                          url
+                        }
+                        ... on Issue {
+                          title
+                          url
+                        }
+                      }
+                    }
+                    ... on LabeledEvent  {
+                      createdAt
+                      actor {login}
+                      label {
+                        color
+                        name
+                      }
+                    }
                     ... on PullRequestReview {
                         id
                         state
                         createdAt
                         body
                         author {login}
-                        comments(last: 21) {
+                        comments(last: 100) {
+                            totalCount
                             edges { node {
                                 id
                                 __typename
@@ -42,6 +102,19 @@ query ($owner: String!, $name: String!, $number: Int!) {
                         body
                         createdAt
                         author {login}
+                    }
+                    ... on RenamedTitleEvent {
+                        createdAt
+                        actor {login}
+                        previousTitle
+                        currentTitle
+                    }
+                    ... on ReviewRequestedEvent {
+                        createdAt
+                        actor {login}
+                        requestedReviewer {
+                            ... on User {login}
+                        }
                     }
                 }}
             }
