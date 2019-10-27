@@ -15,7 +15,7 @@ query ($owner: String!, $name: String!, $number: Int!) {
             title
             updatedAt
             url
-            timelineItems(last: 50) {
+            timelineItems(last: 100) {
                 edges { node {
                     __typename
                     ... on PullRequestCommit {
@@ -97,6 +97,21 @@ query ($owner: String!, $name: String!, $number: Int!) {
                             }}
                         }
                     }
+                    ... on PullRequestCommitCommentThread {
+                        commit {
+                            authoredDate
+                            abbreviatedOid
+                            message
+                        }
+                        comments(first:100) {
+                            totalCount
+                            edges { node {
+                                createdAt
+                                author {login}
+                                body
+                            }}
+                        }
+                    }
                     ... on IssueComment {
                         id
                         body
@@ -115,6 +130,14 @@ query ($owner: String!, $name: String!, $number: Int!) {
                         requestedReviewer {
                             ... on User {login}
                         }
+                    }
+                    ... on ReadyForReviewEvent {
+                        createdAt
+                        actor {login}
+                    }
+
+                    ... on PullRequestRevisionMarker {
+                        createdAt
                     }
                 }}
             }

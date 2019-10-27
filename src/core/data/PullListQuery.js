@@ -9,9 +9,15 @@ query ($owner: String!, $name: String!) {
           title
           state
           updatedAt
+          timelineItems {
+            totalCount
+          }
+          comments {
+            totalCount
+          }
         }
       }
     }
   }
 }
-        `;
+`;

@@ -141,6 +141,15 @@ function Item(item, left = 0) {
             ]];
         }
 
+        case 'ReadyForReviewEvent': {
+            return [[
+                createdAt,
+                actor,
+                '~',
+                `Marked as 'ready for review'`
+            ]];
+        }
+
         case 'LabeledEvent': {
             return [[
                 createdAt,
@@ -162,6 +171,25 @@ function Item(item, left = 0) {
                 author,
                 '?',
                 body
+            ]];
+        }
+
+        case 'PullRequestCommitCommentThread': {
+            //return [[
+                //createdAt,
+                //author,
+                //'?',
+                //`${item.comments.totalCount} comments on '${item.commit.message}'`
+            //]].concat(
+            return item.comments.edges.map(({node}) => [node.createdAt, node.author.login, '?', node.body]);
+        }
+
+        case 'PullRequestRevisionMarker': {
+            return [[
+                '',
+                '',
+                '',
+                magenta('↓ New Commits ↓')
             ]];
         }
 
