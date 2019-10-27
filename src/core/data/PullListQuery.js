@@ -9,11 +9,20 @@ query ($owner: String!, $name: String!) {
           title
           state
           updatedAt
+          author {login}
+          baseRefName
+          headRefName
           timelineItems {
             totalCount
           }
           comments {
             totalCount
+          }
+          reviewThreads(first: 100) {
+            totalCount
+            edges { node {
+              comments {totalCount}
+            }}
           }
         }
       }

@@ -17,12 +17,13 @@ export default function CoreStructure(props) {
         const View = item.component;
         const childProps = {repo, ...item.props};
         const label = ` ${(View.label && View.label(childProps)) || '?'} `;
+        const height = '100%-' + index;
         if(index === stack.length - 1) {
-            return <box key={index} label={label} top={index} height={`100%-${index}`} border={{type: 'line' }}>
+            return <box key={index} tags label={label} top={index} height={height} border={{type: 'line' }}>
                 <View {...childProps} />
             </box>;
         }
-        return <box key={index} label={label} top={index} height={1} border={{type: 'line' }}/>;
+        return <box key={index} tags label={label} top={index} height={height} border={{type: 'line' }}/>;
     });
 
 }

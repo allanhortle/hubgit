@@ -87,6 +87,7 @@ query ($owner: String!, $name: String!, $number: Int!) {
                         createdAt
                         body
                         author {login}
+                        url
                         comments(last: 100) {
                             totalCount
                             edges { node {

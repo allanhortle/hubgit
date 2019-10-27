@@ -15,11 +15,13 @@ import BlockLayout from '../affordance/BlockLayout';
 import Title from '../affordance/Title';
 import flatMap from 'unmutable/flatMap';
 import TimelineItemArray from '../affordance/TimelineItemArray';
+import {useCoreContext} from '../core/CoreContext';
 
 
 export default function PullItem(props) {
     const {viewIndex} = props;
     const {owner, name} = props.repo;
+    const {pushStack} = useCoreContext();
 
     const [index, setIndex] = useState(null);
     const [itemId, setItemId] = useState(props.itemId);
@@ -59,6 +61,7 @@ export default function PullItem(props) {
 
 
             const timeline = TimelineItemArray(timelineItems);
+            log(timeline);
 
 
             return <box bottom={0} top={0}>
@@ -80,7 +83,8 @@ export default function PullItem(props) {
                     align="left"
                     top={7}
                     pad={0}
-                    rows={[['','','','']].concat(timeline)}
+                    height={timeline.length}
+                    rows={[['','','','']].concat(timeline.map(get('row')))}
                     style={{
                         selected: {
                             fg: 'black',
@@ -90,6 +94,11 @@ export default function PullItem(props) {
                             bg: 'blue'
                         }
                     }}
+                onSelect={(_, index) =>  {
+                    const {type, view, viewProps} = timeline[index - 1];
+                    log(type, viewProps);
+                    pushStack(view, viewProps);
+                }}
                 />
             </box>
         }}

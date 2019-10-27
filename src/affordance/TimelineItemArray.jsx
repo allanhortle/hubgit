@@ -16,12 +16,17 @@ import Title from '../affordance/Title';
 import flatMap from 'unmutable/flatMap';
 import reverse from 'unmutable/reverse';
 
+// views
+import PullRequestReview from '../pullrequest/PullRequestReview';
+
 type RowConfig = {
     time?: Array<string>,
     actor?: Array<string>,
     icon?: string,
     message?: string,
-    color?: (?string) => string
+    color?: (?string) => string,
+    view?: Function,
+    viewProps?: {}
 };
 
 function Item(item, left = 0) {
@@ -40,16 +45,29 @@ function Item(item, left = 0) {
         actor = ['actor', 'login'],
         icon,
         message,
-        color = x => x
+        color = x => x,
+        view,
+        viewProps = {}
     }: RowConfig, dd) => {
         const data = dd || item;
-
-        return [
+        const type = data.__typename;
+        const row = [
             pipeWith(data, getIn(time), date),
             pipeWith(data, getIn(actor), yellow),
             color(icon),
             color(message) || grey(__typename)
         ];
+        viewProps.title = row.join(' ');
+        viewProps.row = row;
+        let defaultView = () => null;
+        defaultView.label = () => viewProps.title;
+
+        return {
+            type,
+            viewProps,
+            row,
+            view: view || defaultViewconst
+        };
     };
 
     switch (__typename) {
@@ -62,7 +80,7 @@ function Item(item, left = 0) {
                 time: ['commit', 'authoredDate'],
                 actor: ['commit', 'author', 'user', 'login'],
                 icon: grey('*'),
-                message: grey(item.commit.message)
+                message: grey(item.commit.message),
             })];
         }
         case 'HeadRefForcePushedEvent': {
@@ -105,7 +123,9 @@ function Item(item, left = 0) {
                 actor: ['author', 'login'],
                 color,
                 icon,
-                message
+                message,
+                view: PullRequestReview,
+                viewProps: {id: item.id, title: 'PullRequestReview'}
             })];
         }
 
@@ -128,12 +148,6 @@ function Item(item, left = 0) {
         //  Comments
         //
         case 'PullRequestReviewComment': {
-            let outdatedText = outdated ? grey('OUTDATED') : ''
-            let code = diffHunk.split('\n').slice(1).slice(-3).map(line => {
-                if(line[0] === '+') return green(line);
-                if(line[0] === '-') return red(line);
-                return line;
-            }).join('\n' + leftPadding);
             return [row({
                 icon: '"',
                 message: body

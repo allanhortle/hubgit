@@ -65,11 +65,13 @@ export default function PullList(props) {
                     }
                 }}
                 rows={
-                    [['#', 'Status', 'Name', 'Comments', 'Activty']].concat(plainList.map(ii => [
+                    [['#', 'Author', 'Branch', 'Status', 'Name', 'Comments', 'Activty']].concat(plainList.map(ii => [
                         `${ii.number}`,
+                        yellow(ii.author.login),
+                        `${ii.headRefName}`,
                         colorState(ii.state),
                         ii.title,
-                        ii.comments.totalCount.toString(),
+                        `${ii.comments.totalCount + ii.reviewThreads.edges.reduce((rr, item) => rr + item.node.comments.totalCount, 0)}`,
                         ii.timelineItems.totalCount.toString()
                     ]))
                 }
