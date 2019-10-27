@@ -45,6 +45,10 @@ query ($owner: String!, $name: String!, $number: Int!) {
                       createdAt
                       actor {login}
                     }
+                    ... on ReopenedEvent {
+                      createdAt
+                      actor {login}
+                    }
                     ... on HeadRefDeletedEvent {
                       actor {login}
                       createdAt

@@ -1,3 +1,6 @@
+import parseISO from 'date-fns/fp/parseISO';
+import format from 'date-fns/fp/format';
+import pipe from 'unmutable/pipe';
 
 const colors = [
     'black',
@@ -39,3 +42,11 @@ export const left = (text) => `{left}${text}{/left}`;
 export const right = (text) => `{right}${text}{/right}`;
 export const split = (a, b) => a + '{|}' + b;
 export const title = (text) => center(whiteBg(black(text)));
+
+export const date = (str) => {
+    try {
+        return pipe(parseISO, format('yyyy-MM-dd HH:mm'), blue)(str);
+    } catch (e) {
+        return blue('Unknown Date');
+    }
+};

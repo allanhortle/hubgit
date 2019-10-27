@@ -8,12 +8,21 @@ import map from 'unmutable/lib/map';
 import sortBy from 'unmutable/lib/sortBy';
 import pipeWith from 'unmutable/lib/util/pipeWith';
 import pipe from 'unmutable/lib/util/pipe';
-import {blue, red, green, magenta, grey, yellow, right} from '../util/tag';
+import {blue, red, green, magenta, grey, yellow, right, date, cyan} from '../util/tag';
 import {mapNodes} from '../util/edgeList';
 import ListLayout from '../affordance/ListLayout';
 import BlockLayout from '../affordance/BlockLayout';
 import Title from '../affordance/Title';
 import flatMap from 'unmutable/flatMap';
+import reverse from 'unmutable/reverse';
+
+type RowConfig = {
+    time?: Array<string>,
+    actor?: Array<string>,
+    icon?: string,
+    message?: string,
+    color?: (?string) => string
+};
 
 function Item(item, left = 0) {
     const {state, body, comments, __typename, id, diffHunk, outdated, path} = item;
@@ -22,143 +31,102 @@ function Item(item, left = 0) {
     const actor = pipeWith(item, getIn(['actor', 'login']), yellow);
     const createdAt = pipeWith(item, getIn(['createdAt']), blue);
 
-    const date = (path) => pipeWith(item, getIn(path), blue);
     const greenPath = (path) => pipeWith(item, getIn(path), green);
     const name = (path) => pipeWith(item, getIn(path), yellow);
     const text = (pp) => pipeWith(item, getIn(pp));
+
+    const row = ({
+        time = ['createdAt'],
+        actor = ['actor', 'login'],
+        icon,
+        message,
+        color = x => x
+    }: RowConfig, dd) => {
+        const data = dd || item;
+
+        return [
+            pipeWith(data, getIn(time), date),
+            pipeWith(data, getIn(actor), yellow),
+            color(icon),
+            color(message) || grey(__typename)
+        ];
+    };
+
     switch (__typename) {
+
+        //
+        // Git
+        //
         case 'PullRequestCommit': {
-            return [[
-                date(['commit', 'authoredDate']),
-                name(['commit', 'author', 'user', 'login']),
-                grey('*'),
-                grey(item.commit.message)
-            ]];
+            return [row({
+                time: ['commit', 'authoredDate'],
+                actor: ['commit', 'author', 'user', 'login'],
+                icon: grey('*'),
+                message: grey(item.commit.message)
+            })];
         }
-
         case 'HeadRefForcePushedEvent': {
-            return [[
-                createdAt,
-                name(['actor', 'login']),
-                red('⤒'),
-                `Force-pushed ${item.ref} from ${item.beforeCommit.abbreviatedOid} to ${item.afterCommit.abbreviatedOid}`
-            ]];
+            return [row({
+                color: cyan,
+                icon: '⤒',
+                message: `Force-pushed ${item.ref} from ${item.beforeCommit.abbreviatedOid} to ${item.afterCommit.abbreviatedOid}`
+            })];
+        }
+        case 'HeadRefDeletedEvent': {
+            return [row({
+                icon: red('×'),
+                message: red(`deleted ${item.headRefName}`)
+            })];
         }
 
+
+
+        //
+        // Reivews
+        //
         case 'PullRequestReview': {
             let color = blue;
             let icon = '~';
-            let text = 'left a review comment';
+            let count = item.comments.totalCount;
+            let p = (text) => text + (count === 1 ? '' : 's');
+            let message = `Reviewed (${count} ${p('comment')})`;
             if(state === 'APPROVED') {
                 color = green;
                 icon = '✔';
+                message = `Approved (${count} ${p('comment')})`;
             }
             if(state === 'CHANGES_REQUESTED') {
                 color = red;
                 icon = '✘';
+                message = `${count} ${p('change')} requested`;
             }
 
-            return [[
-                createdAt,
-                author,
-                color(icon),
-                color(state + ' ' + item.comments.totalCount)
-
-            ]];
-            //.concat(pipeWith(
-                //comments.edges,
-                //map(get('node')),
-                //flatMap(item => Item(item, 0))
-            //));
-        }
-
-        case 'IssueComment':
-            return [[
-                createdAt,
-                author,
-                '?',
-                body
-            ]];
-
-        case 'MergedEvent': {
-            return [[
-                createdAt,
-                actor,
-                magenta('<'),
-                `merged ${item.commit.abbreviatedOid} into ${item.mergeRefName}`
-            ]];
-        }
-        case 'ClosedEvent': {
-            return [[
-                createdAt,
-                actor,
-                red('×'),
-                `closed the pullRequest`
-            ]];
-        }
-        case 'HeadRefDeletedEvent': {
-            return [[
-                createdAt,
-                actor,
-                red('×'),
-                `deleted ${item.headRefName}`
-            ]];
-        }
-
-        //case 'ReferencedEvent': {
-            //return [[
-                //createdAt,
-                //actor,
-                //'*',
-                //item.commit.message
-            //]];
-        //}
-
-        case 'CrossReferencedEvent': {
-            return [[
-                createdAt,
-                actor,
-                '~',
-                `Referenced this in: ${item.source.title} (${item.source.url})`
-            ]];
-        }
-
-        case 'RenamedTitleEvent': {
-            return [[
-                createdAt,
-                actor,
-                '~',
-                `changed the title from ${item.previousTitle} to ${item.currentTitle}`
-            ]];
+            return [row({
+                actor: ['author', 'login'],
+                color,
+                icon,
+                message
+            })];
         }
 
         case 'ReviewRequestedEvent': {
-            return [[
-                createdAt,
-                actor,
-                '~',
-                `Requested a review from ${item.requestedReviewer.login}`
-            ]];
+            return [row({
+                icon: `~`,
+                message: `Requested a review from ${item.requestedReviewer.login}`
+            })];
         }
 
         case 'ReadyForReviewEvent': {
-            return [[
-                createdAt,
-                actor,
-                '~',
-                `Marked as 'ready for review'`
-            ]];
+            return [row({
+                icon: '~',
+                message: `Marked as 'ready for review'`
+            })];
         }
 
-        case 'LabeledEvent': {
-            return [[
-                createdAt,
-                actor,
-                '#',
-                `Added label: {#${item.label.color}-bg}{black-fg}${item.label.name}{/}`
-            ]];
-        }
 
+        //
+        //  Comments
+        //
         case 'PullRequestReviewComment': {
             let outdatedText = outdated ? grey('OUTDATED') : ''
             let code = diffHunk.split('\n').slice(1).slice(-3).map(line => {
@@ -166,40 +134,92 @@ function Item(item, left = 0) {
                 if(line[0] === '-') return red(line);
                 return line;
             }).join('\n' + leftPadding);
-            return [[
-                createdAt,
-                author,
-                '?',
-                body
-            ]];
+            return [row({
+                icon: '"',
+                message: body
+            })];
         }
 
         case 'PullRequestCommitCommentThread': {
-            //return [[
-                //createdAt,
-                //author,
-                //'?',
-                //`${item.comments.totalCount} comments on '${item.commit.message}'`
-            //]].concat(
-            return item.comments.edges.map(({node}) => [node.createdAt, node.author.login, '?', node.body]);
+            return item.comments.edges.map(({node}) => row({
+                icon: '"',
+                message: node.body
+            }, node));
         }
 
+        case 'IssueComment': {
+            return [row({
+                actor: ['author', 'login'],
+                icon: '"',
+                message: item.body
+            })];
+        }
+
+
+        //
+        // Github Meta
+        //
+        case 'RenamedTitleEvent': {
+            return [row({
+                color: cyan,
+                icon: `#`,
+                message: `changed the title from ${item.previousTitle} to ${item.currentTitle}`
+            })];
+        }
+        case 'LabeledEvent': {
+            return [row({
+                icon: '#',
+                message: `Added label: {#${item.label.color}-bg}{black-fg}${item.label.name}{/}`
+            })];
+        }
+        case 'MergedEvent': {
+            return [row({
+                icon: magenta('<'),
+                message: magenta(`merged ${item.commit.abbreviatedOid} into ${item.mergeRefName}`)
+            })];
+        }
+        case 'ClosedEvent': {
+            return [row({
+                color: red,
+                icon: '×',
+                message: `Closed the pull request`
+            })];
+        }
+        case 'ReopenedEvent': {
+            return [row({
+                color: green,
+                icon: '•',
+                message: `Reopened the pull request`
+            })];
+        }
+        case 'CrossReferencedEvent': {
+            return [row({
+                color: cyan,
+                icon: `#`,
+                message: `Referenced this in: ${item.source.title} (${item.source.url})`
+            })];
+        }
+
+
+        //
+        // Misc
+        //
         case 'PullRequestRevisionMarker': {
-            return [[
-                '',
-                '',
-                '',
-                magenta('↓ New Commits ↓')
-            ]];
+            return [row({
+                time: '',
+                actro: '',
+                icon: '',
+                icon: red('⤒'),
+                message: magenta('↓ New Commits ↓')
+            })];
         }
 
-        default:
-            return [[
-                createdAt,
-                author,
-                '',
-                grey(__typename)
-            ]];
+        default: {
+            return [row({
+                icon: '',
+                message: grey(__typename)
+            })];
+        }
     }
 }
 
@@ -208,13 +228,13 @@ export default function TimelineItemArray(timelineItems) {
         timelineItems.edges,
         map(get('node')),
         sortBy(get('createdAt')),
+        //reverse(),
         flatMap((item, index) => {
             return [
                 'MentionedEvent',
                 'SubscribedEvent',
                 'ReferencedEvent'
             ].includes(item.__typename) ? [] : Item(item)
-        }),
-        _ => log(_) || _
+        })
     );
 }

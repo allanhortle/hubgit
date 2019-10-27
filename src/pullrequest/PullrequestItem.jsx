@@ -57,7 +57,6 @@ export default function PullItem(props) {
             const rowPadding = {top: 1, bottom: 1, left: 0, right: 0};
             const bottomPadding = {top: 0, bottom: 1, left: 0, right: 0};
 
-            log(timelineItems);
 
             const timeline = TimelineItemArray(timelineItems);
 
@@ -79,8 +78,8 @@ export default function PullItem(props) {
                     vi={true}
                     tags={true}
                     align="left"
-                    width="100%"
                     top={7}
+                    pad={0}
                     rows={[['','','','']].concat(timeline)}
                     style={{
                         selected: {

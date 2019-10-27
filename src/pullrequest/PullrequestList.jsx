@@ -42,7 +42,6 @@ export default function PullList(props) {
     return <LoadingBoundary message={message}>
         {(data) => {
             const plainList = list(data).edges.map(ii => ii.node);
-            log(plainList);
 
             return <listtable
                 align="left"
