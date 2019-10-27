@@ -33,8 +33,6 @@ export default function PullList(props) {
     const list = getIn(['repository', 'pullRequests']);
     const id = get('number');
     const item = getIn(['repository', 'pullRequest']);
-    const listHead = ['#', 'Status', 'Name'];
-    const renderListItem = ii => [`${ii.number}`, colorState(ii.state), ii.title];
 
     useEffect(() => {
         message.onRequest({owner, name});
@@ -44,6 +42,7 @@ export default function PullList(props) {
     return <LoadingBoundary message={message}>
         {(data) => {
             const plainList = list(data).edges.map(ii => ii.node);
+            log(plainList);
 
             return <listtable
                 align="left"
@@ -66,11 +65,15 @@ export default function PullList(props) {
                         bg: 'blue'
                     }
                 }}
-                rows={pipeWith(
-                    plainList,
-                    map(renderListItem),
-                    _ => [listHead].concat(_)
-                )}
+                rows={
+                    [['#', 'Status', 'Name', 'Comments', 'Activty']].concat(plainList.map(ii => [
+                        `${ii.number}`,
+                        colorState(ii.state),
+                        ii.title,
+                        ii.comments.totalCount.toString(),
+                        ii.timelineItems.totalCount.toString()
+                    ]))
+                }
                 onSelect={(_, index) =>  {
                     setSelected(index);
                     const {number, title} = plainList[index - 1] || {};

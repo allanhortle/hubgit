@@ -62,7 +62,7 @@ export default function PullItem(props) {
             const timeline = TimelineItemArray(timelineItems);
 
 
-            return <box scrollable mouse height="100%" bottom={0} top={0}>
+            return <box bottom={0} top={0}>
                 <listtable tags invertSelected={false} align="left" height={7} top={0} rows={[
                     ['changes:', `${green('+' + additions)} ${red('-' + deletions)}`],
                     ['state:', colorState(state)],
@@ -72,7 +72,26 @@ export default function PullItem(props) {
                     ['created:', `${createdAt}`],
                     ['updated:', `${updatedAt}`],
                 ]}/ >
-                <listtable tags invertSelected={false} align="left" width="100%" height={timeline.length} top={8} rows={timeline}/ >
+                <listtable
+                    mouse={true}
+                    keys={true}
+                    focused={true}
+                    vi={true}
+                    tags={true}
+                    align="left"
+                    width="100%"
+                    top={7}
+                    rows={[['','','','']].concat(timeline)}
+                    style={{
+                        selected: {
+                            fg: 'black',
+                            bg: 'yellow'
+                        },
+                        scrollbar: {
+                            bg: 'blue'
+                        }
+                    }}
+                />
             </box>
         }}
     </LoadingBoundary>;
