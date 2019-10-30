@@ -19,7 +19,7 @@ import flatMap from 'unmutable/flatMap';
 import TimelineItemArray from '../affordance/TimelineItemArray';
 import {useCoreContext} from '../core/CoreContext';
 import PullRequest from './data/PullRequest';
-import PullrequestItem from './PullrequestItem';
+import PullRequestItemStructure from './PullRequestItemStructure';
 
 
 export default function PullrequestItemFromRef(props) {
@@ -34,10 +34,11 @@ export default function PullrequestItemFromRef(props) {
 
 
     return <LoadingBoundary message={message}>
-        {(data) => {
-            const {title, number} = data.repository.ref.associatedPullRequests.nodes[0];
-            return <PullrequestItem title={`#${number} - ${title}`} viewIndex={number} repo={{owner, name}} />;
-        }}
+        {pipe(
+            getIn(['repository', 'ref', 'associatedPullRequests', 'nodes', 0]),
+            _ => new PullRequest(_),
+            pullRequest => <PullRequestItemStructure pullRequest={pullRequest} />
+        )}
     </LoadingBoundary>;
 }
 

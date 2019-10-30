@@ -50,3 +50,16 @@ export const date = (str) => {
         return blue('Unknown Date');
     }
 };
+
+export function state(val) {
+    switch(val) {
+        case 'MERGED':
+            return magenta(val);
+        case 'CLOSED':
+            return red(val);
+        case 'OPEN':
+            return green(val);
+        default:
+            return val;
+    }
+}

@@ -2,8 +2,8 @@
 import {EntityApi} from 'react-enty';
 import ApplicationSchema from './ApplicationSchema';
 import github from '../service/Github';
-import PullQuery from './data/PullQuery';
-import PullListQuery from './data/PullListQuery';
+import PullQuery from '../pullrequest/data/PullQuery';
+import PullListQuery from '../pullrequest/data/PullListQuery';
 import IssueQuery from './data/IssueQuery';
 import IssueListQuery from './data/IssueListQuery';
 import ReleaseQuery from './data/ReleaseQuery';
@@ -19,6 +19,7 @@ const takeFirst = (request) => {
             return current.then(
                 response => {
                     current = null;
+
                     return response;
                 },
                 err => {
