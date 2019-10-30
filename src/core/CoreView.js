@@ -15,6 +15,7 @@ import CoreContext from './CoreContext';
 import update from 'unmutable/update';
 
 import PullrequestItem from '../pullrequest/PullrequestItem';
+import PullrequestItemFromRef from '../pullrequest/PullrequestItemFromRef';
 import PullrequestList from '../pullrequest/PullrequestList';
 import IssuesView from '../repo/IssuesView';
 import RepoView from '../repo/RepoView';
@@ -54,6 +55,7 @@ class Stack {
 
 function content(view, viewIndex, repo) {
     const item = (component) => ({component, props: {view, viewIndex, repo}});
+    if(repo.ref) return item(PullrequestItemFromRef);
     if(view === 'readme') return item(RepoView);
     if(view === 'releases') return item(ReleasesView);
     if(view === 'pulls' || view === 'pull') {
@@ -77,6 +79,9 @@ export default pipe(
                         return process.exit(0);
                     }
                     popStack();
+                });
+                CoreScreen.key(['p'], () => {
+                    pushStack(PullrequestList, {repo: repoData, title: 'Pull Requests'});
                 });
 
 

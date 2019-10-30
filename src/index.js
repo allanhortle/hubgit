@@ -2,7 +2,7 @@
 import pkg from '../package.json';
 import program from 'commander';
 import CoreView from './core/CoreView';
-import {Repository, Remote} from 'nodegit';
+import {Repository, Remote, Branch} from 'nodegit';
 import path from 'path';
 import gitUrlParse from 'git-url-parse';
 import {red, gray} from 'chalk';
@@ -20,9 +20,11 @@ program
         } else {
             try {
                 const repo = await Repository.open(path.join(process.cwd(), ".git"));
+                const branch = await repo.getCurrentBranch();
                 const remotes = await Remote.list(repo);
                 const firstRemote = await Remote.lookup(repo, remotes[0]);
                 repoData = gitUrlParse(firstRemote.url());
+                repoData.ref = branch.name();
             } catch (e) {
                 console.log(`${red('error')} No repo was found.`);
                 console.log(gray('Either run `hub` in a git repository or pass `owner/repo` to the -r flag'));

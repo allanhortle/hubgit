@@ -10,6 +10,7 @@ import ReleaseQuery from './data/ReleaseQuery';
 import ReleaseListQuery from './data/ReleaseListQuery';
 
 import PullRequestReviewQuery from '../pullrequest/data/PullRequestReviewQuery';
+import PullRequestFromRefQuery from '../pullrequest/data/PullRequestFromRefQuery';
 
 const takeFirst = (request) => {
     let current;
@@ -36,6 +37,7 @@ const Api = EntityApi({
         pullItem: takeFirst((params) => github('pull', params, PullQuery)),
         pullList: takeFirst((params) => github('pullList', params, PullListQuery)),
         pullRequestReview: takeFirst((params) => github('pullRequestReview', params, PullRequestReviewQuery)),
+        pullRequestFromRef: takeFirst((params) => github('pullRequestFromRef', params, PullRequestFromRefQuery)),
         issue: takeFirst((params) => github('issue', params, IssueQuery)),
         issueList: takeFirst((params) => github('issueList', params, IssueListQuery)),
         release: takeFirst((params) => github('release', params, ReleaseQuery)),
