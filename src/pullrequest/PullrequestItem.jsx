@@ -7,15 +7,18 @@ import getIn from 'unmutable/lib/getIn';
 import map from 'unmutable/lib/map';
 import sortBy from 'unmutable/lib/sortBy';
 import pipeWith from 'unmutable/lib/util/pipeWith';
+import groupBy from 'unmutable/groupBy';
 import pipe from 'unmutable/lib/util/pipe';
-import {blue, red, green, magenta, grey, yellow, black, title, split, left, right, center, whiteBg} from '../util/tag';
+import {blue, red, green, magenta, grey, yellow, black, title, split, left, right, center, whiteBg, date} from '../util/tag';
 import {mapNodes} from '../util/edgeList';
 import ListLayout from '../affordance/ListLayout';
 import BlockLayout from '../affordance/BlockLayout';
+import Markdown from '../affordance/Markdown';
 import Title from '../affordance/Title';
 import flatMap from 'unmutable/flatMap';
 import TimelineItemArray from '../affordance/TimelineItemArray';
 import {useCoreContext} from '../core/CoreContext';
+import PullRequest from './data/PullRequest';
 
 
 export default function PullItem(props) {
@@ -52,28 +55,32 @@ export default function PullItem(props) {
                 state,
                 updatedAt,
                 url,
-                title
-            } = data.repository.pullRequest;
-            const description = body || 'No Description';
+                title,
+                reviewThreads
+            } = new PullRequest(data.repository.pullRequest);
+            const description = body ? 'Description: ' + body.replace(/\n|\r/g, ' ') : 'No Description'
             const descriptionLines = description.split('\r').length;
             const rowPadding = {top: 1, bottom: 1, left: 0, right: 0};
             const bottomPadding = {top: 0, bottom: 1, left: 0, right: 0};
 
 
-            const timeline = TimelineItemArray(timelineItems);
-            log(timeline);
+            const timeline = pipeWith(
+                timelineItems.nodes,
+                sortBy(get('createdAt')),
+                //reverse(),
+                TimelineItemArray,
+                _ => [
+                    {
+                        row: [date(createdAt), yellow(author.login), '#', description],
+                        view: Markdown,
+                        viewProps: {title: 'Description', markdown: body}
+                    }
+                ].concat(_)
+            );
 
 
             return <box bottom={0} top={0}>
-                <listtable tags invertSelected={false} align="left" height={7} top={0} rows={[
-                    ['changes:', `${green('+' + additions)} ${red('-' + deletions)}`],
-                    ['state:', colorState(state)],
-                    ['opened by:', yellow(author.login)],
-                    ['merge:', `${blue(headRefName)} into ${blue(baseRefName)}`],
-                    ['url:', `${url}`],
-                    ['created:', `${createdAt}`],
-                    ['updated:', `${updatedAt}`],
-                ]}/ >
+                <box tags top={1} height={1} content={`  ${colorState(state)}  ${blue(headRefName)} into ${blue(baseRefName)}  ${green('+'+additions)} ${red('-'+deletions)}  ${url}`} />
                 <listtable
                     mouse={true}
                     keys={true}
@@ -81,9 +88,9 @@ export default function PullItem(props) {
                     vi={true}
                     tags={true}
                     align="left"
-                    top={7}
+                    top={2}
                     pad={0}
-                    height={timeline.length}
+                    height={timeline.length + 1}
                     rows={[['','','','']].concat(timeline.map(get('row')))}
                     style={{
                         selected: {
@@ -96,7 +103,6 @@ export default function PullItem(props) {
                     }}
                 onSelect={(_, index) =>  {
                     const {type, view, viewProps} = timeline[index - 1];
-                    log(type, viewProps);
                     pushStack(view, viewProps);
                 }}
                 />

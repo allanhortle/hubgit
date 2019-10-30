@@ -20,7 +20,7 @@ export default function(props) {
             }}
             tags={true}
             label="{red-fg} Error {/red-fg}"
-            children={message.requestError.stack}
+            content={message.requestError.stack.toString()}
         />}
         message={message}
         children={children}

@@ -15,8 +15,23 @@ query ($owner: String!, $name: String!, $number: Int!) {
             title
             updatedAt
             url
+            reviewThreads(last: 100) {
+                nodes {
+                    id
+                    comments(last:100) { nodes {
+                        author {login}
+                        body
+                        createdAt
+                        diffHunk
+                        id
+                        outdated
+                        path
+                        pullRequestReview {id}
+                    }}
+                }
+            }
             timelineItems(last: 100) {
-                edges { node {
+                nodes {
                     __typename
                     ... on PullRequestCommit {
                       commit {
@@ -90,7 +105,7 @@ query ($owner: String!, $name: String!, $number: Int!) {
                         url
                         comments(last: 100) {
                             totalCount
-                            edges { node {
+                            nodes {
                                 id
                                 __typename
                                 diffHunk
@@ -99,7 +114,7 @@ query ($owner: String!, $name: String!, $number: Int!) {
                                 author {login}
                                 createdAt
                                 body
-                            }}
+                            }
                         }
                     }
                     ... on PullRequestCommitCommentThread {
@@ -110,11 +125,11 @@ query ($owner: String!, $name: String!, $number: Int!) {
                         }
                         comments(first:100) {
                             totalCount
-                            edges { node {
+                            nodes {
                                 createdAt
                                 author {login}
                                 body
-                            }}
+                            }
                         }
                     }
                     ... on IssueComment {
@@ -144,7 +159,7 @@ query ($owner: String!, $name: String!, $number: Int!) {
                     ... on PullRequestRevisionMarker {
                         createdAt
                     }
-                }}
+                }
             }
         }
     }

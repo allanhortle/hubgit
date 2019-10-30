@@ -4,21 +4,22 @@ query PullRequestReviewQuery($id: ID!) {
     id
     __typename
     ... on PullRequestReview {
-      author {login}
-      comments(last: 100) {
-        edges {
-          node {
-            __typename
-            author {login}
-            body
-            createdAt
-            diffHunk
-            id
-            outdated
-            path
-          }
+        author {login}
+        pullRequest {
+            reviewThreads(first:100) { nodes {
+                comments(first:100) { nodes {
+                    author {login}
+                    body
+                    createdAt
+                    diffHunk
+                    id
+                    outdated
+                    originalPosition
+                    path
+                    pullRequestReview {id}
+                }}
+            }}
         }
-      }
     }
   }
 }

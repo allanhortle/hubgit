@@ -16,7 +16,7 @@ export default function CoreStructure(props) {
     return stack._data.map((item, index) => {
         const View = item.component;
         const childProps = {repo, ...item.props};
-        const label = ` ${(View.label && View.label(childProps)) || '?'} `;
+        const label = ` ${childProps.title || '?'} `;
         const height = '100%-' + index;
         if(index === stack.length - 1) {
             return <box key={index} tags label={label} top={index} height={height} border={{type: 'line' }}>

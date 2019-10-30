@@ -66,7 +66,7 @@ function Item(item, left = 0) {
             type,
             viewProps,
             row,
-            view: view || defaultViewconst
+            view: view || defaultView
         };
     };
 
@@ -111,12 +111,12 @@ function Item(item, left = 0) {
             if(state === 'APPROVED') {
                 color = green;
                 icon = '✔';
-                message = `Approved (${count} ${p('comment')})`;
+                message = count > 0 ? `Approved (${count} ${p('comment')})` : 'Approved';
             }
             if(state === 'CHANGES_REQUESTED') {
                 color = red;
                 icon = '✘';
-                message = `${count} ${p('change')} requested`;
+                message = count > 0 ? `${count} ${p('change')} requested` : '';
             }
 
             return [row({
@@ -155,7 +155,7 @@ function Item(item, left = 0) {
         }
 
         case 'PullRequestCommitCommentThread': {
-            return item.comments.edges.map(({node}) => row({
+            return item.comments.nodes.map((node) => row({
                 icon: '"',
                 message: node.body
             }, node));
@@ -239,10 +239,7 @@ function Item(item, left = 0) {
 
 export default function TimelineItemArray(timelineItems) {
     return pipeWith(
-        timelineItems.edges,
-        map(get('node')),
-        sortBy(get('createdAt')),
-        //reverse(),
+        timelineItems,
         flatMap((item, index) => {
             return [
                 'MentionedEvent',
