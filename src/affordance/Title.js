@@ -1,7 +1,13 @@
 // @flow
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 
-export default ({margin = {}, children, top}) => {
+type Props = {
+    margin: {},
+    children: string,
+    top?: number
+};
+
+export default ({margin = {}, children, top}: Props) => {
     return <box padding={margin}><box
         tags
         top={top}
@@ -11,6 +17,6 @@ export default ({margin = {}, children, top}) => {
         }}
         height={1}
         content={`{center}${children}{/center}`}
-    /></box>
-}
+    /></box>;
+};
 

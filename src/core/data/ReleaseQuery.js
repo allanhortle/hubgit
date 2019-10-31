@@ -1,3 +1,4 @@
+// @flow
 export default `
 query($owner: String!, $name: String!, $tagName: String!) {
   repository(owner: $owner, name: $name) {

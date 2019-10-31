@@ -1,3 +1,4 @@
+// @flow
 import PullRequestItemPartial from './PullRequestItemPartial';
 export default `
 query ($owner: String!, $name: String!, $number: Int!) {

@@ -9,6 +9,6 @@ var repoList = new ArraySchema(repo);
 
 repo.shape = new ObjectSchema({});
 
-export default new ObjectSchema({
+export default new ObjectSchema<{}>({
     repoList
 });

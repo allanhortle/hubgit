@@ -1,8 +1,6 @@
 // @flow
+import type {ComponentType} from 'react';
 import React from 'react';
-import {MemoryRouter} from 'react-router';
-import {Route} from 'react-router';
-
 
 const style = {
     top: 'center',
@@ -18,8 +16,12 @@ const style = {
         }
     }
 };
-
-export default () => (Component: *) => class ErrorBoundaryHoc extends React.Component<*, *> {
+type Props = {};
+type State = {
+    hasError: boolean,
+    error: ?{stack: string}
+};
+export default () => (Component: ComponentType<{}>) => class ErrorBoundaryHoc extends React.Component<Props, State> {
     constructor(props: {}) {
         super(props);
         this.state = {
@@ -27,14 +29,14 @@ export default () => (Component: *) => class ErrorBoundaryHoc extends React.Comp
             error: null
         };
     }
-    static getDerivedStateFromError(error: *) {
+    static getDerivedStateFromError(error: {}) {
         return {error};
     }
     render() {
         const {error} = this.state;
         if(error) {
-            return <box class={style} tags={true} label="{red-fg} Error! {/red-fg}">{error.stack}</box>;
+            return <box {...style} tags={true} label="{red-fg} Error! {/red-fg}">{error.stack}</box>;
         }
         return <Component {...this.props} />;
     }
-}
+};

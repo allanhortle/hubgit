@@ -1,7 +1,7 @@
-import {pipe} from 'unfunctional';
+// @flow
+import {pipe, pipeWith} from 'unfunctional';
 import update from 'unmutable/update';
 import updateIn from 'unmutable/updateIn';
-import {nodes} from '../../util/edgeList';
 
 type PullRequestShape = {
     additions: number,
@@ -13,7 +13,22 @@ type PullRequestShape = {
     headRefName: string,
     id: string,
     number: number,
+    pullRequestReviewThreadMap: {
+        [string]: {id: string}
+    },
+    reviewThreads: {
+        nodes: Array<{
+            comments: {
+                nodes: Array<{
+                    pullRequestReview: {id: string}
+                }>
+            }
+        }>
+    },
     state: string,
+    timelineItems: {
+        nodes: Array<{}>
+    },
     title: string,
     updatedAt: string,
     url: string
@@ -52,13 +67,13 @@ export default class PullRequest {
     toJSON(): PullRequestShape {
         return this._data;
     }
-    unit(data) {
+    unit(data: PullRequestShape) {
         return new this.constructor(data);
     }
-    flatPipe(...fns) {
+    flatPipe<A, B>(...fns: Array<(A) => B>) {
         return pipeWith(this._data, ...fns);
     }
-    pipe(...fns) {
+    pipe<A, B>(...fns: Array<(A) => B>) {
         return pipeWith(this._data, ...fns.concat(this.unit));
     }
 

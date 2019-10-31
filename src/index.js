@@ -1,8 +1,9 @@
 #!/usr/bin/env node
+// @flow
 import pkg from '../package.json';
 import program from 'commander';
 import CoreView from './core/CoreView';
-import {Repository, Remote, Branch} from 'nodegit';
+import {Repository, Remote} from 'nodegit';
 import path from 'path';
 import gitUrlParse from 'git-url-parse';
 import {red, gray} from 'chalk';
@@ -26,7 +27,9 @@ program
                 repoData = gitUrlParse(firstRemote.url());
                 repoData.ref = branch.name();
             } catch (e) {
+                // eslint-disable-next-line
                 console.log(`${red('error')} No repo was found.`);
+                // eslint-disable-next-line
                 console.log(gray('Either run `hub` in a git repository or pass `owner/repo` to the -r flag'));
                 process.exit(1);
             }

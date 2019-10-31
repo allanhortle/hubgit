@@ -24,13 +24,13 @@ const takeFirst = (request) => {
                 },
                 err => {
                     current = null;
-                    throw err
+                    throw err;
                 }
             );
         }
         current = request(...args);
         return current;
-    }
+    };
 };
 
 const Api = EntityApi({

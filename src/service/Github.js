@@ -1,8 +1,12 @@
 // @flow
+/* eslint no-undef: 0 */
 import {graphql} from '@octokit/graphql';
 
 export default async (name: string, vars: {}, query: string): Promise<mixed> => {
     const start = +new Date();
+
+    //
+    // $FlowFixMe - Safe logging
     log(name, 'start');
     return graphql(query, {
         ...vars,
