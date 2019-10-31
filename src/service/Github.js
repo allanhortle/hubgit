@@ -1,6 +1,11 @@
 // @flow
 /* eslint no-undef: 0 */
 import {graphql} from '@octokit/graphql';
+import Rest from '@octokit/rest';
+
+export const rest = new Rest({
+    auth: process.env.GITHUB_TOKEN
+});
 
 export default async (name: string, vars: {}, query: string): Promise<mixed> => {
     const start = +new Date();

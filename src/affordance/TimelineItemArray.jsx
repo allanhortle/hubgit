@@ -7,6 +7,7 @@ import flatMap from 'unmutable/flatMap';
 
 // views
 import PullRequestReview from '../pullrequest/PullRequestReview';
+import CommitItemView from '../commit/CommitItemView';
 
 
 type RowConfig<A> = {
@@ -59,11 +60,14 @@ function Item(item) {
         // Git
         //
         case 'PullRequestCommit': {
+            const {id, message, abbreviatedOid} = item.commit;
             return [row({
                 time: ['commit', 'authoredDate'],
                 actor: ['commit', 'author', 'user', 'login'],
                 icon: grey('*'),
-                message: grey(item.commit.message)
+                message: grey(message),
+                view: CommitItemView,
+                viewProps: {id, title: `Commit: ${abbreviatedOid}`}
             })];
         }
         case 'HeadRefForcePushedEvent': {

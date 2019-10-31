@@ -30,12 +30,12 @@ export default `
         __typename
         ... on PullRequestCommit {
             commit {
-            id
-            committedDate
-            authoredDate
-            author {user {login}}
-            message
-            oid
+                id
+                committedDate
+                authoredDate
+                author {user {login}}
+                message
+                oid
             }
         }
         ... on HeadRefForcePushedEvent {

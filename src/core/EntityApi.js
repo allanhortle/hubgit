@@ -12,6 +12,8 @@ import ReleaseListQuery from './data/ReleaseListQuery';
 import PullRequestReviewQuery from '../pullrequest/data/PullRequestReviewQuery';
 import PullRequestFromRefQuery from '../pullrequest/data/PullRequestFromRefQuery';
 
+import CommitItemQuery from '../commit/data/CommitItemQuery';
+
 const takeFirst = (request) => {
     let current;
     return async (...args) => {
@@ -58,7 +60,8 @@ query($owner: String!, $name: String!) {
 }
         `))
 
-    }
+    },
+    commitItem: takeFirst(p => github('commitItem', p, CommitItemQuery))
 }, ApplicationSchema);
 
 export default Api;

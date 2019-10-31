@@ -41,7 +41,7 @@
   },
   "dependencies": {
     "@octokit/graphql": "^4.0.0",
-    "@octokit/rest": "^16.28.7",
+    "@octokit/rest": "^16.34.0",
     "blessed": "^0.1.81",
     "blessed-contrib": "^4.8.16",
     "chalk": "^2.4.2",

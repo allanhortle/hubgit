@@ -64,3 +64,7 @@ export function state(val: string) {
             return val;
     }
 }
+
+export function changes(props: {additions: number, deletions: number}): string {
+    return `${green('+' + props.additions)} ${red('-' + props.deletions)}`;
+}
