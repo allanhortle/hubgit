@@ -7,29 +7,15 @@ query CommitItemQuery($id: ID!) {
         ... on Commit {
                 abbreviatedOid
                 additions
-                deletions
-                authoredDate
-                author {user {login}}
-                authoredByCommitter
+                author {email, name, date}
                 changedFiles
-                committedDate
+                committer {email, name, date}
+                deletions
                 message
                 messageBody
                 messageHeadline
                 oid
-                tree {
-                    id
-                    entries {
-                        name
-                        type
-                        object {
-                            __typename
-                            ... on Blob {
-                                text
-                            }
-                        }
-                    }
-                }
+                url
             }
     }
 }

@@ -7,7 +7,7 @@ import map from 'unmutable/map';
 import pipeWith from 'unmutable/pipeWith';
 import toArray from 'unmutable/toArray';
 import groupBy from 'unmutable/groupBy';
-import {red, green, magenta, grey, yellow, date} from '../util/tag';
+import {red, green, magenta, grey, yellow, date, diff} from '../util/tag';
 import PullRequest from './data/PullRequest';
 
 type Props = {
@@ -36,19 +36,10 @@ export default function PullRequestReview(props: Props) {
                     groupBy(get('path')),
                     map((comments, path) => {
                         const {outdated, diffHunk, originalPosition} = comments[0];
-                        let code = diffHunk
-                            .replace(/(@@.*?@@)\s/, `${magenta('$1')}\n`)
-                            .split('\n')
-                            .slice(1)
-                            .slice(-8)
-                            .map((line, index) => {
-                                if(index === originalPosition) return line;
-                                if(line[0] === '+') return green(line);
-                                if(line[0] === '-') return red(line);
-                                return line;
-                            })
-                            .join('\n');
-
+                        let code = diff(diffHunk, {
+                            window: [1, -8],
+                            highlightLine: originalPosition
+                        });
                         let outdatedText = outdated ? red(' [OUTDATED]') : '';
 
                         return [

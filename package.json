@@ -49,6 +49,7 @@
     "date-fns": "^2.6.0",
     "git-url-parse": "^11.1.2",
     "neo-blessed": "^0.2.0",
+    "node-fetch": "^2.6.0",
     "nodegit": "^0.25.1",
     "react": "^16.9.0",
     "react-blessed": "^0.6.1",

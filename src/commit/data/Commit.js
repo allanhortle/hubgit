@@ -1,11 +1,11 @@
 // @flow
 type CommitShape = {
     additions: number,
-    author: string,
-    authoredDate: string,
+    author: {name: string, email: string, date: string},
+    committer: {name: string, email: string, date: string},
     changedFiles: number,
-    committedDate: string,
     deletions: number,
+    diff: string,
     message: string,
     messageBody: string,
     messageHeadline: string,
@@ -28,17 +28,17 @@ export default class Commit {
     get author() {
         return this._data.author;
     }
-    get authoredDate() {
-        return this._data.authoredDate;
-    }
     get changedFiles() {
         return this._data.changedFiles;
     }
-    get committedDate() {
-        return this._data.committedDate;
+    get committer() {
+        return this._data.committer;
     }
     get deletions() {
         return this._data.deletions;
+    }
+    get diff() {
+        return this._data.diff;
     }
     get message() {
         return this._data.message;
@@ -51,5 +51,8 @@ export default class Commit {
     }
     get oid() {
         return this._data.oid;
+    }
+    get url() {
+        return this._data.url;
     }
 }

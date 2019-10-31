@@ -7,7 +7,7 @@ import Stack from './data/Stack';
 
 export type CoreContextType = {
     pushStack: (ComponentType<StackItemProps>, StackItemProps) => void,
-    repo: {},
+    repo: {owner: string, name: string},
     stack: Stack,
     view: string
 };

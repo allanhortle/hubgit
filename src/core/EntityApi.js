@@ -1,7 +1,8 @@
 // @flow
 import {EntityApi} from 'react-enty';
 import ApplicationSchema from './ApplicationSchema';
-import github from '../service/Github';
+import {graphql as github} from '../service/Github';
+import {diff} from '../service/Github';
 import PullQuery from '../pullrequest/data/PullQuery';
 import PullListQuery from '../pullrequest/data/PullListQuery';
 import IssueQuery from './data/IssueQuery';
@@ -13,6 +14,7 @@ import PullRequestReviewQuery from '../pullrequest/data/PullRequestReviewQuery';
 import PullRequestFromRefQuery from '../pullrequest/data/PullRequestFromRefQuery';
 
 import CommitItemQuery from '../commit/data/CommitItemQuery';
+import setIn from 'unmutable/setIn';
 
 const takeFirst = (request) => {
     let current;
@@ -61,7 +63,14 @@ query($owner: String!, $name: String!) {
         `))
 
     },
-    commitItem: takeFirst(p => github('commitItem', p, CommitItemQuery))
+    commitItem: takeFirst(async (props) => {
+        const {id, owner, name, oid} = props;
+        const [commitItem, diffText] = await Promise.all([
+            github('commitItem', {id}, CommitItemQuery),
+            diff(`repos/${owner}/${name}/commits/${oid}`)
+        ]);
+        return setIn(['commitItem', 'diff'], diffText)(commitItem);
+    })
 }, ApplicationSchema);
 
 export default Api;

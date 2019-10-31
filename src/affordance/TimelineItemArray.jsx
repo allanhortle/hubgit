@@ -60,14 +60,14 @@ function Item(item) {
         // Git
         //
         case 'PullRequestCommit': {
-            const {id, message, abbreviatedOid} = item.commit;
+            const {id, message, abbreviatedOid, oid} = item.commit;
             return [row({
                 time: ['commit', 'authoredDate'],
                 actor: ['commit', 'author', 'user', 'login'],
                 icon: grey('*'),
                 message: grey(message),
                 view: CommitItemView,
-                viewProps: {id, title: `Commit: ${abbreviatedOid}`}
+                viewProps: {id, title: `Commit: ${abbreviatedOid}`, oid}
             })];
         }
         case 'HeadRefForcePushedEvent': {
