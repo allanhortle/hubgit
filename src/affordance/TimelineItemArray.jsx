@@ -70,7 +70,7 @@ function Item(item) {
             return [row({
                 color: cyan,
                 icon: '⤒',
-                message: `Force-pushed ${item.ref} from ${item.beforeCommit.abbreviatedOid} to ${item.afterCommit.abbreviatedOid}`
+                message: `Force-pushed ${item.ref.name} from ${item.beforeCommit.abbreviatedOid} to ${item.afterCommit.abbreviatedOid}`
             })];
         }
         case 'HeadRefDeletedEvent': {
