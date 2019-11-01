@@ -12,6 +12,8 @@ import ReleaseListQuery from './data/ReleaseListQuery';
 
 import PullRequestReviewQuery from '../pullrequest/data/PullRequestReviewQuery';
 import PullRequestFromRefQuery from '../pullrequest/data/PullRequestFromRefQuery';
+import ReopenPullRequestMutation from '../pullrequest/data/ReopenPullRequestMutation';
+import ClosePullRequestMutation from '../pullrequest/data/ClosePullRequestMutation';
 
 import CommitItemQuery from '../commit/data/CommitItemQuery';
 import setIn from 'unmutable/setIn';
@@ -36,6 +38,8 @@ const takeFirst = (request) => {
         return current;
     };
 };
+
+const query = (nn, qq) => takeFirst((pp) => github(nn, pp, qq));
 
 const Api = EntityApi({
     repo: {
@@ -70,7 +74,11 @@ query($owner: String!, $name: String!) {
             diff(`repos/${owner}/${name}/commits/${oid}`)
         ]);
         return setIn(['commitItem', 'diff'], diffText)(commitItem);
-    })
+    }),
+    pullRequest: {
+        close: query('pullRequest.close', ClosePullRequestMutation),
+        reopen: query('pullRequest.reopen', ReopenPullRequestMutation)
+    }
 }, ApplicationSchema);
 
 export default Api;

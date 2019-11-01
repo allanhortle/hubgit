@@ -1,5 +1,5 @@
 // @flow
-import React from 'react';
+import React, {useEffect} from 'react';
 import get from 'unmutable/lib/get';
 import sortBy from 'unmutable/lib/sortBy';
 import pipeWith from 'unmutable/lib/util/pipeWith';
@@ -8,6 +8,7 @@ import Markdown from '../affordance/Markdown';
 import TimelineItemArray from '../affordance/TimelineItemArray';
 import {useCoreContext} from '../core/CoreContext';
 import PullRequest from './data/PullRequest';
+import PullRequestCommandView from './PullRequestCommandView';
 
 type Props = {
     pullRequest: PullRequest
@@ -26,13 +27,20 @@ export default function PullItem(props: Props) {
         state,
         url
     } = props.pullRequest;
+    const {pushStack, screen} = useCoreContext();
+
+    useEffect(() => {
+        screen.onceKey([':'], () => pushStack(
+            PullRequestCommandView,
+            {title: 'Commands', pullRequest: props.pullRequest}
+        ));
+        return () => screen.unkey([':']);
+    }, []);
 
     const description = body ? 'Description: ' + body.replace(/\n|\r/g, ' ') : 'No Description';
-    const {pushStack} = useCoreContext();
 
     const timeline = pipeWith(
         timelineItems.nodes,
-        sortBy(get('createdAt')),
         TimelineItemArray,
         _ => [
             {
@@ -40,7 +48,8 @@ export default function PullItem(props: Props) {
                 view: Markdown,
                 viewProps: {title: 'Description', markdown: body}
             }
-        ].concat(_)
+        ].concat(_),
+        sortBy(ii => ii.row[0])
     );
 
 

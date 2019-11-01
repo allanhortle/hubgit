@@ -1,20 +1,22 @@
 //@flow
+const idDate = `
+id
+createdAt
+`;
 export default `
+    ${idDate}
     additions
     author {login}
     baseRefName
     body
-    createdAt
     deletions
     headRefName
-    id
     number
     state
     title
     updatedAt
     url
     reviewThreads(last: 100) { nodes {
-        id
         comments(last:100) { nodes {
             author {login}
             body
@@ -39,39 +41,39 @@ export default `
             }
         }
         ... on HeadRefForcePushedEvent {
-            createdAt
+            ${idDate}
             ref {name}
             beforeCommit {abbreviatedOid}
             afterCommit {abbreviatedOid}
             actor {login}
         }
         ... on MergedEvent {
-            createdAt
+            ${idDate}
             mergeRefName
             commit {abbreviatedOid}
             actor {login}
         }
         ... on ClosedEvent {
-            createdAt
+            ${idDate}
             actor {login}
         }
         ... on ReopenedEvent {
-            createdAt
+            ${idDate}
             actor {login}
         }
         ... on HeadRefDeletedEvent {
             actor {login}
-            createdAt
+            ${idDate}
             headRefName
         }
         ... on ReferencedEvent {
             actor {login}
-            createdAt
+            ${idDate}
             commit {message}
         }
         ... on CrossReferencedEvent  {
             actor {login}
-            createdAt
+            ${idDate}
             source {
             ... on PullRequest {
                 title
@@ -84,7 +86,7 @@ export default `
             }
         }
         ... on LabeledEvent  {
-            createdAt
+            ${idDate}
             actor {login}
             label {
             color
@@ -92,9 +94,8 @@ export default `
             }
         }
         ... on PullRequestReview {
-            id
+            ${idDate}
             state
-            createdAt
             body
             author {login}
             url
@@ -128,26 +129,25 @@ export default `
             }
         }
         ... on IssueComment {
-            id
+            ${idDate}
             body
-            createdAt
             author {login}
         }
         ... on RenamedTitleEvent {
-            createdAt
+            ${idDate}
             actor {login}
             previousTitle
             currentTitle
         }
         ... on ReviewRequestedEvent {
-            createdAt
+            ${idDate}
             actor {login}
             requestedReviewer {
                 ... on User {login}
             }
         }
         ... on ReadyForReviewEvent {
-            createdAt
+            ${idDate}
             actor {login}
         }
 

@@ -63,7 +63,8 @@ export default pipe(
                     repo: repoData,
                     setContext: this.setContext,
                     pushStack,
-                    popStack
+                    popStack,
+                    screen: CoreScreen
                 };
             }
             render() {
