@@ -1,14 +1,12 @@
 // @flow
 import React from 'react';
 
-const logc = (name, {yi, yl, height} = {}) => console.log(`${name}:: yi: ${yi}, yl: ${yl}, height: ${height}`);
 
-function renderer(coords) {
+function renderer() {
     let offset = 0;
     let rowIndex = 0;
 
     return (el, i) => {
-        const {lpos} = this.children[i];
         el.shrink = true;
         el.position.left = 0;
 
@@ -24,6 +22,6 @@ function renderer(coords) {
     };
 }
 
-export default function BlockLayout(props) {
+export default function BlockLayout(props: mixed) {
     return <layout width="100%" height="100%" renderer={renderer} {...props} />;
 }

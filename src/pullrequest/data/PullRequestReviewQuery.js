@@ -1,3 +1,4 @@
+// @flow
 export default `
 query PullRequestReviewQuery($id: ID!) {
   pullRequestReview: node(id: $id) {

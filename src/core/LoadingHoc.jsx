@@ -1,11 +1,13 @@
 // @flow
+import type {ComponentType} from 'react';
+
 import React from 'react';
 
 type Config = {
     name: string
 };
 
-export default (config: Config) => (Component: *) => (props: *) => {
+export default (config: Config) => (Component: ComponentType<{}>) => (props: {}) => {
     const pos = {top: 1, left: 1};
     return props[config.name]
         .requestState

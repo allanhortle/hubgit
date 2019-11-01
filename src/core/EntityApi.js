@@ -1,9 +1,10 @@
 // @flow
 import {EntityApi} from 'react-enty';
 import ApplicationSchema from './ApplicationSchema';
-import github from '../service/Github';
-import PullQuery from './data/PullQuery';
-import PullListQuery from './data/PullListQuery';
+import {graphql as github} from '../service/Github';
+import {diff} from '../service/Github';
+import PullQuery from '../pullrequest/data/PullQuery';
+import PullListQuery from '../pullrequest/data/PullListQuery';
 import IssueQuery from './data/IssueQuery';
 import IssueListQuery from './data/IssueListQuery';
 import ReleaseQuery from './data/ReleaseQuery';
@@ -11,6 +12,11 @@ import ReleaseListQuery from './data/ReleaseListQuery';
 
 import PullRequestReviewQuery from '../pullrequest/data/PullRequestReviewQuery';
 import PullRequestFromRefQuery from '../pullrequest/data/PullRequestFromRefQuery';
+import ReopenPullRequestMutation from '../pullrequest/data/ReopenPullRequestMutation';
+import ClosePullRequestMutation from '../pullrequest/data/ClosePullRequestMutation';
+
+import CommitItemQuery from '../commit/data/CommitItemQuery';
+import setIn from 'unmutable/setIn';
 
 const takeFirst = (request) => {
     let current;
@@ -19,18 +25,21 @@ const takeFirst = (request) => {
             return current.then(
                 response => {
                     current = null;
+
                     return response;
                 },
                 err => {
                     current = null;
-                    throw err
+                    throw err;
                 }
             );
         }
         current = request(...args);
         return current;
-    }
+    };
 };
+
+const query = (nn, qq) => takeFirst((pp) => github(nn, pp, qq));
 
 const Api = EntityApi({
     repo: {
@@ -57,6 +66,18 @@ query($owner: String!, $name: String!) {
 }
         `))
 
+    },
+    commitItem: takeFirst(async (props) => {
+        const {id, owner, name, oid} = props;
+        const [commitItem, diffText] = await Promise.all([
+            github('commitItem', {id}, CommitItemQuery),
+            diff(`repos/${owner}/${name}/commits/${oid}`)
+        ]);
+        return setIn(['commitItem', 'diff'], diffText)(commitItem);
+    }),
+    pullRequest: {
+        close: query('pullRequest.close', ClosePullRequestMutation),
+        reopen: query('pullRequest.reopen', ReopenPullRequestMutation)
     }
 }, ApplicationSchema);
 

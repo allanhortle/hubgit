@@ -24,11 +24,9 @@
     "build": "rm -rf lib && babel src --out-dir lib",
     "prepublish": "yarn run build",
     "watch": "yarn build -w",
-    "flow": "blueflag-test flow",
-    "flow-coverage": "blueflag-test flow-coverage",
-    "lint": "blueflag-test lint",
-    "test": "yarn jest",
-    "test-all": "yarn lint && yarn flow && yarn test && yarn flow-coverage"
+    "test-lint": "yarn blueflag-test lint",
+    "test-flow": "yarn flow check",
+    "test": "yarn test-lint && yarn test-flow"
   },
   "devDependencies": {
     "@babel/cli": "^7.5.5",
@@ -36,13 +34,14 @@
     "@babel/runtime": "^7.5.5",
     "babel-preset-blueflag": "^1.0.1",
     "babel-runtime": "^6.26.0",
+    "blueflag-test": "^0.23.0",
     "dotenv": "^8.1.0",
-    "flow-bin": "^0.106.1",
+    "flow-bin": "^0.110.1",
     "ws": "^6.1.3"
   },
   "dependencies": {
     "@octokit/graphql": "^4.0.0",
-    "@octokit/rest": "^16.28.7",
+    "@octokit/rest": "^16.34.0",
     "blessed": "^0.1.81",
     "blessed-contrib": "^4.8.16",
     "chalk": "^2.4.2",
@@ -50,15 +49,14 @@
     "date-fns": "^2.6.0",
     "git-url-parse": "^11.1.2",
     "neo-blessed": "^0.2.0",
+    "node-fetch": "^2.6.0",
     "nodegit": "^0.25.1",
-    "ora": "^3.4.0",
     "react": "^16.9.0",
     "react-blessed": "^0.6.1",
     "react-blessed-contrib": "^0.2.1",
     "react-devtools-core": "^3.6.3",
     "react-dom": "^16.9.0",
     "react-enty": "^1.0.0-alpha.6",
-    "react-router": "^5.0.1",
     "simple-git": "^1.126.0",
     "unfunctional": "^0.1.0",
     "unmutable": "^0.46.0"

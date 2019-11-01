@@ -1,6 +1,6 @@
 // @flow
 import blessed from 'blessed';
-import util from 'util'
+import util from 'util';
 
 const screen = blessed.screen({
     autoPadding: true,

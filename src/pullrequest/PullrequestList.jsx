@@ -3,36 +3,20 @@ import React, {useEffect, useState} from 'react';
 import LoadingBoundary from '../core/LoadingBoundary';
 import Api from '../core/EntityApi';
 import getIn from 'unmutable/lib/getIn';
-import get from 'unmutable/get';
-import pipeWith from 'unmutable/pipeWith';
-import map from 'unmutable/map';
 import PullrequestItem from './PullrequestItem';
-import {blue, red, green, magenta, grey, yellow, black, title, split, left, right, center, whiteBg} from '../util/tag';
+import {yellow, state as colorState} from '../util/tag';
 import {useCoreContext} from '../core/CoreContext';
 
-function colorState(val) {
-    switch(val) {
-        case 'MERGED':
-            return magenta(val);
-        case 'CLOSED':
-            return red(val);
-        case 'OPEN':
-            return green(val);
-        default:
-            return val;
-    }
-}
-
-
-export default function PullList(props) {
+type Props = {
+    repo: {owner: string, name: string}
+};
+export default function PullList(props: Props) {
     const {owner, name} = props.repo;
     const message = Api.repo.pullList.useRequest();
     const {pushStack} = useCoreContext();
     const [selected, setSelected] = useState(1);
 
     const list = getIn(['repository', 'pullRequests']);
-    const id = get('number');
-    const item = getIn(['repository', 'pullRequest']);
 
     useEffect(() => {
         message.onRequest({owner, name});
@@ -53,7 +37,6 @@ export default function PullList(props) {
                 pad={0}
                 height="100%"
                 width="100%"
-                onSelect
                 selected={selected}
                 style={{
                     selected: {
