@@ -14,6 +14,7 @@ import PullRequestReviewQuery from '../pullrequest/data/PullRequestReviewQuery';
 import PullRequestFromRefQuery from '../pullrequest/data/PullRequestFromRefQuery';
 import ReopenPullRequestMutation from '../pullrequest/data/ReopenPullRequestMutation';
 import ClosePullRequestMutation from '../pullrequest/data/ClosePullRequestMutation';
+import MergePullRequestMutation from '../pullrequest/data/MergePullRequestMutation';
 
 import CommitItemQuery from '../commit/data/CommitItemQuery';
 import setIn from 'unmutable/setIn';
@@ -77,7 +78,8 @@ query($owner: String!, $name: String!) {
     }),
     pullRequest: {
         close: query('pullRequest.close', ClosePullRequestMutation),
-        reopen: query('pullRequest.reopen', ReopenPullRequestMutation)
+        reopen: query('pullRequest.reopen', ReopenPullRequestMutation),
+        merge: query('pullRequest.merge', MergePullRequestMutation)
     }
 }, ApplicationSchema);
 
