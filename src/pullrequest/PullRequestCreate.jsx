@@ -36,16 +36,17 @@ export default function PullRequestCreate(props: Props) {
             (refs) => {
                 const branches = refs.map(get('name'));
 
-                const onSubmit = () => {
+                const onSubmit = async () => {
                     form.current.submit();
                     const {submission} = form.current || {};
 
-                    create.onRequest({input: {
-                        baseRefName: refName,
-                        headRefName: `refs/heads/${branches.find(ii => submission[ii])}`,
+                    await create.onRequest({input: {
+                        headRefName: refName,
+                        baseRefName: `refs/heads/${branches.find(ii => submission[ii])}`,
                         title: submission.title,
                         repositoryId: id
                     }});
+                    pushStack(PullrequestList);
                 };
 
                 return create.requestState
