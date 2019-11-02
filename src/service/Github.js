@@ -19,7 +19,7 @@ export const diff = (url: string) => {
         }
     })
         .then(res => res.text());
-}
+};
 
 export const graphql = async (name: string, vars: {}, query: string): Promise<mixed> => {
     const start = +new Date();
@@ -36,6 +36,9 @@ export const graphql = async (name: string, vars: {}, query: string): Promise<mi
             log(name, 'end', (end - start) / 1000);
             return data;
         })
-        .catch(log);
+        .catch(error => {
+            log(error);
+            return Promise.reject(error);
+        });
 };
 

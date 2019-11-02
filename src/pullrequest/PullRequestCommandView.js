@@ -1,6 +1,5 @@
 // @flow
 import React, {useEffect} from 'react';
-import LoadingBoundary from '../core/LoadingBoundary';
 import Api from '../core/EntityApi';
 import PullRequestCommandStructure from './PullRequestCommandStructure';
 import {useCoreContext} from '../core/CoreContext';
@@ -12,18 +11,21 @@ type Props = {
 export default function PullRequestCommandView(props: Props) {
     const {pullRequest} = props;
     const {id} = pullRequest;
-    const {screen, repo: {owner, name}, popStack} = useCoreContext();
+    const {screen, popStack} = useCoreContext();
 
     const close = Api.pullRequest.close.useRequest();
     const reopen = Api.pullRequest.reopen.useRequest();
+    const merge = Api.pullRequest.merge.useRequest();
+
+    const actionPop = (action, payload) => () => action.onRequest(payload).then(popStack);
 
     const commands = [
-        {row: ['m', 'Merge'], action: () => {}},
+        {row: ['m', 'Merge'], action: actionPop(merge, {id})},
         {row: ['a', 'Review - Approve'], action: () => {}},
         {row: ['r', 'Review - Request changes'], action: () => {}},
         {row: ['C', 'Review - Comment'], action: () => {}},
-        {row: ['x', 'Close'], action: () => close.onRequest({id}).then(popStack)},
-        {row: ['o', 'Re-open'], action: () => reopen.onRequest({id}).then(popStack)},
+        {row: ['x', 'Close'], action: actionPop(close, {id})},
+        {row: ['o', 'Re-open'], action: actionPop(reopen, {id})},
         {row: ['c', 'Comment'], action: popStack},
         {row: ['s', 'Merge - Squash'], action: () => {}},
         {row: ['R', 'Merge - Rebase'], action: () => {}},
@@ -36,6 +38,7 @@ export default function PullRequestCommandView(props: Props) {
 
     return close.requestState
         .emptyFlatMap(() => reopen.requestState)
+        .emptyFlatMap(() => merge.requestState)
         .emptyMap(() => {
             return <PullRequestCommandStructure
                 pullRequest={pullRequest}
