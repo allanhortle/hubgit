@@ -7,13 +7,9 @@ import PullrequestItem from './PullrequestItem';
 import {yellow, state as colorState} from '../util/tag';
 import {useCoreContext} from '../core/CoreContext';
 
-type Props = {
-    repo: {owner: string, name: string}
-};
-export default function PullList(props: Props) {
-    const {owner, name} = props.repo;
+export default function PullList() {
     const message = Api.repo.pullList.useRequest();
-    const {pushStack} = useCoreContext();
+    const {pushStack, repo:{owner, name}} = useCoreContext();
     const [selected, setSelected] = useState(1);
 
     const list = getIn(['repository', 'pullRequests']);

@@ -14,10 +14,14 @@ import PullRequestReviewQuery from '../pullrequest/data/PullRequestReviewQuery';
 import PullRequestFromRefQuery from '../pullrequest/data/PullRequestFromRefQuery';
 import ReopenPullRequestMutation from '../pullrequest/data/ReopenPullRequestMutation';
 import ClosePullRequestMutation from '../pullrequest/data/ClosePullRequestMutation';
+import CreatePullRequestMutation from '../pullrequest/data/CreatePullRequestMutation';
 import MergePullRequestMutation from '../pullrequest/data/MergePullRequestMutation';
+
+import RefListQuery from '../ref/data/RefListQuery';
 
 import CommitItemQuery from '../commit/data/CommitItemQuery';
 import setIn from 'unmutable/setIn';
+import pipeWith from 'unmutable/pipeWith';
 
 const takeFirst = (request) => {
     let current;
@@ -42,45 +46,46 @@ const takeFirst = (request) => {
 
 const query = (nn, qq) => takeFirst((pp) => github(nn, pp, qq));
 
-const Api = EntityApi({
-    repo: {
-        pullItem: takeFirst((params) => github('pull', params, PullQuery)),
-        pullList: takeFirst((params) => github('pullList', params, PullListQuery)),
-        pullRequestReview: takeFirst((params) => github('pullRequestReview', params, PullRequestReviewQuery)),
-        pullRequestFromRef: takeFirst((params) => github('pullRequestFromRef', params, PullRequestFromRefQuery)),
-        issue: takeFirst((params) => github('issue', params, IssueQuery)),
-        issueList: takeFirst((params) => github('issueList', params, IssueListQuery)),
-        release: takeFirst((params) => github('release', params, ReleaseQuery)),
-        releaseList: takeFirst((params) => github('releaseList', params, ReleaseListQuery)),
+const straightQueries = [
+    // repo
+    ['repo.pullItem', PullQuery],
+    ['repo.pullList', PullListQuery],
+    ['repo.pullRequestReview', PullRequestReviewQuery],
+    ['repo.pullRequestFromRef', PullRequestFromRefQuery],
+    ['repo.issue', IssueQuery],
+    ['repo.issueList', IssueListQuery],
+    ['repo.release', ReleaseQuery],
+    ['repo.releaseList', ReleaseListQuery],
 
-        //releases: takeFirst((params) => github('releaseList', params, `
+    // Refs
+    ['ref.list', RefListQuery],
 
-        readme: takeFirst((params) => github('readme', params, `
-query($owner: String!, $name: String!) {
-    repository(owner: $owner, name: $name) {
-        object(expression: "master:README.md") {
-            ... on Blob {
-            text
-            }
-        }
-    }
-}
-        `))
+    // Pull Requests
+    ['pullRequest.create', CreatePullRequestMutation],
+    ['pullRequest.close', ClosePullRequestMutation],
+    ['pullRequest.reopen', ReopenPullRequestMutation],
+    ['pullRequest.merge', MergePullRequestMutation],
 
-    },
-    commitItem: takeFirst(async (props) => {
+    // commit
+    ['commitItem', takeFirst(async (props) => {
         const {id, owner, name, oid} = props;
         const [commitItem, diffText] = await Promise.all([
             github('commitItem', {id}, CommitItemQuery),
             diff(`repos/${owner}/${name}/commits/${oid}`)
         ]);
         return setIn(['commitItem', 'diff'], diffText)(commitItem);
-    }),
-    pullRequest: {
-        close: query('pullRequest.close', ClosePullRequestMutation),
-        reopen: query('pullRequest.reopen', ReopenPullRequestMutation),
-        merge: query('pullRequest.merge', MergePullRequestMutation)
-    }
-}, ApplicationSchema);
+    })]
+];
+
+const Api = EntityApi(
+    pipeWith(
+        {},
+        ...straightQueries.map(([name, qq]) => setIn(
+            name.split('.'),
+            typeof qq === 'string' ? query(name, qq) : qq
+        )),
+    ),
+    ApplicationSchema
+);
 
 export default Api;

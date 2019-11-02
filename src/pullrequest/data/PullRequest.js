@@ -36,7 +36,7 @@ type PullRequestShape = {
 
 export default class PullRequest {
     _data: PullRequestShape;
-    constructor(data: PullRequestShape) {
+    constructor(data: PullRequestShape = {}) {
 
         // Make a map of comment lists keyed by their first items review id
         const threadMap = (data.reviewThreads.nodes || []).reduce((rr, ii) => {
