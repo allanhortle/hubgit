@@ -7,6 +7,7 @@ import {Repository, Remote} from 'nodegit';
 import path from 'path';
 import gitUrlParse from 'git-url-parse';
 import {red, gray} from 'chalk';
+import Ref from './ref/data/Ref';
 
 
 program
@@ -25,7 +26,7 @@ program
                 const remotes = await Remote.list(repo);
                 const firstRemote = await Remote.lookup(repo, remotes[0]);
                 repoData = gitUrlParse(firstRemote.url());
-                repoData.ref = branch.name();
+                repoData.ref = Ref.fromQualifiedName(branch.name());
             } catch (e) {
                 // eslint-disable-next-line
                 console.log(`${red('error')} No repo was found.`);

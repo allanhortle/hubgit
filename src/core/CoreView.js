@@ -26,12 +26,12 @@ type Props = {};
 
 function content(view, viewIndex, repo): StackItem {
     const item = (component): StackItem => ({component, props: {view, viewIndex, repo}});
-    if(repo.ref) return item(PullrequestItemFromRef);
     if(view === 'readme') return item(RepoView);
     if(view === 'releases') return item(ReleasesView);
     if(view === 'pulls' || view === 'pull') {
         return item(viewIndex ? PullrequestItem : PullrequestList);
     }
+    if(repo.ref) return item(PullrequestItemFromRef);
     return item(() => <box>404 View not found</box>);
 }
 
@@ -44,6 +44,7 @@ export default pipe(
                 super(props);
                 this.setContext = (data) => this.setState(data);
                 const pushStack = (component, props) => this.setState(update('stack', _ => _.push({component, props})));
+                const replaceStack = (component, props) => this.setState(update('stack', _ => _.replace({component, props})));
                 const popStack = () => this.setState(update('stack', _ => _.pop()));
 
                 CoreScreen.key(['q'], () => {
@@ -64,6 +65,7 @@ export default pipe(
                     setContext: this.setContext,
                     pushStack,
                     popStack,
+                    replaceStack,
                     screen: CoreScreen
                 };
             }

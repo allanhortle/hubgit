@@ -6,11 +6,12 @@ import getIn from 'unmutable/lib/getIn';
 import pipe from 'unmutable/lib/util/pipe';
 import {maybePipe} from 'unfunctional';
 import PullRequest from './data/PullRequest';
+import Ref from '../ref/data/Ref';
 import PullRequestItemStructure from './PullRequestItemStructure';
 import PullRequestCreate from './PullRequestCreate';
 
 type Props = {
-    repo: {owner: string, name: string, ref: string}
+    repo: {owner: string, name: string, ref: Ref}
 };
 export default function PullrequestItemFromRef(props: Props) {
     const {repo} = props;
@@ -19,7 +20,7 @@ export default function PullrequestItemFromRef(props: Props) {
     const message = Api.repo.pullRequestFromRef.useRequest();
 
     useEffect(() => {
-        message.onRequest({owner, name, ref});
+        message.onRequest({owner, name, ref: ref.prefix + ref.name});
     }, []);
 
 
@@ -33,7 +34,7 @@ export default function PullrequestItemFromRef(props: Props) {
             ),
             (structure) => {
                 const {id} = message.response.repository;
-                return structure || <PullRequestCreate refName={ref} id={id} />;
+                return structure || <PullRequestCreate reference={ref} id={id} />;
             }
         )}
     </LoadingBoundary>;
