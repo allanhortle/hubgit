@@ -20,6 +20,9 @@ export default class Stack {
     pop() {
         return new Stack(this._data.slice(0, -1));
     }
+    replace(item: StackItem) {
+        return new Stack([...this._data.slice(0, -1), item]);
+    }
     toArray<A>(fn: (item: StackItem, index: number) => A): Array<A> {
         return this._data.map(fn);
     }

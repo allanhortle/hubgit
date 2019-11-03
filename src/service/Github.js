@@ -37,7 +37,9 @@ export const graphql = async (name: string, vars: {}, query: string): Promise<mi
             return data;
         })
         .catch(error => {
-            log(error);
+            if(error.errors) {
+                return Promise.reject(error.errors[0]);
+            }
             return Promise.reject(error);
         });
 };

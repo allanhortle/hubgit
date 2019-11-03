@@ -4,13 +4,19 @@ import type {StackItemProps} from './data/Stack';
 
 import {createContext, useContext} from 'react';
 import Stack from './data/Stack';
+import Ref from '../ref/data/Ref';
 
 type KeyHandler = (Array<string>, () => void) => void;
 
 export type CoreContextType = {
     popStack: () => void,
     pushStack: (ComponentType<StackItemProps>, StackItemProps) => void,
-    repo: {owner: string, name: string},
+    replaceStack: (ComponentType<StackItemProps>, StackItemProps) => void,
+    repo: {
+        owner: string,
+        name: string,
+        ref: Ref
+    },
     screen: {
         key: KeyHandler,
         onceKey: KeyHandler,
@@ -23,6 +29,7 @@ export type CoreContextType = {
 const CoreContext = createContext<CoreContextType>({
     popStack: () => {},
     pushStack: () => {},
+    replaceStack: () => {},
     repo: {},
     screen: {},
     stack: new Stack([]),
