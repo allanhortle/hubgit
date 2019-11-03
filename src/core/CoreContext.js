@@ -15,6 +15,8 @@ export type CoreContextType = {
     repo: {
         owner: string,
         name: string,
+        view: string,
+        viewIndex: number,
         ref: Ref
     },
     screen: {
@@ -22,8 +24,7 @@ export type CoreContextType = {
         onceKey: KeyHandler,
         unkey: KeyHandler
     },
-    stack: Stack,
-    view: string
+    stack: Stack
 };
 
 const CoreContext = createContext<CoreContextType>({

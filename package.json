@@ -47,7 +47,7 @@
     "chalk": "^2.4.2",
     "commander": "^3.0.0",
     "date-fns": "^2.6.0",
-    "git-url-parse": "^11.1.2",
+    "git-up": "^4.0.1",
     "neo-blessed": "^0.2.0",
     "node-fetch": "^2.6.0",
     "nodegit": "^0.25.1",

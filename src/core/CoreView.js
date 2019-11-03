@@ -24,19 +24,23 @@ import Stack from './data/Stack';
 type Props = {};
 
 
-function content(view, viewIndex, repo): StackItem {
-    const item = (component): StackItem => ({component, props: {view, viewIndex, repo}});
+function content(repo): StackItem {
+    const {view, viewIndex} = repo;
+    const item = (component, props): StackItem => ({component, props: {repo, ...props}});
     if(view === 'readme') return item(RepoView);
     if(view === 'releases') return item(ReleasesView);
     if(view === 'pulls' || view === 'pull') {
-        return item(viewIndex ? PullrequestItem : PullrequestList);
+        return viewIndex ? item(PullrequestItem) : item(PullrequestList, {title: 'Pull Requests'});
+    }
+    if(view === 'issues' || view === 'issue') {
+        return viewIndex ? item(PullrequestItem) : item(IssueListView, {title: 'Issues'});
     }
     if(repo.ref) return item(PullrequestItemFromRef);
     return item(() => <box>404 View not found</box>);
 }
 
 export default pipe(
-    ({repoData, view, viewIndex}) => composeWith(
+    ({repo}) => composeWith(
         ErrorBoundaryHoc(),
         (Component) => class CoreView extends React.Component<Props, CoreContextType> {
             setContext: (CoreContextType) => void;
@@ -54,14 +58,12 @@ export default pipe(
                     popStack();
                 });
                 CoreScreen.key(['p'], () => {
-                    pushStack(PullrequestList, {repo: repoData, title: 'Pull Requests'});
+                    pushStack(PullrequestList, {repo, title: 'Pull Requests'});
                 });
 
                 this.state = {
-                    stack: new Stack([content(view, viewIndex, repoData)]),
-                    view,
-                    viewIndex,
-                    repo: repoData,
+                    stack: new Stack([content(repo)]),
+                    repo,
                     setContext: this.setContext,
                     pushStack,
                     popStack,
@@ -71,7 +73,7 @@ export default pipe(
             }
             render() {
                 return <CoreContext.Provider value={this.state}>
-                    <Component {...this.props} repoData={repoData} />
+                    <Component {...this.props} />
                 </CoreContext.Provider>;
             }
         },

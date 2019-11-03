@@ -3,8 +3,7 @@ export default `
 query ($owner: String!, $name: String!) {
   repository(owner: $owner, name: $name) {
     pullRequests(first: 50, orderBy: {field: UPDATED_AT, direction: DESC}) {
-      edges {
-        node {
+        nodes {
           id
           number
           title
@@ -21,12 +20,11 @@ query ($owner: String!, $name: String!) {
           }
           reviewThreads(first: 100) {
             totalCount
-            edges { node {
+            nodes {
               comments {totalCount}
-            }}
+            }
           }
         }
-      }
     }
   }
 }

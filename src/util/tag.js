@@ -93,3 +93,10 @@ export function diff(text: string, props?: DiffProps = {}): string {
         })
         .join('\n');
 }
+
+export function ellipsis(string: string, limit: number): string {
+    return string.length > limit - 3
+        ? `${string.slice(0, limit)}...`
+        : string
+    ;
+}
