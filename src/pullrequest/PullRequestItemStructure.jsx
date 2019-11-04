@@ -64,6 +64,7 @@ export default function PullItem(props: Props) {
             align="left"
             top={2}
             pad={0}
+            width="100%"
             height={timeline.length + 1}
             rows={[['','','','']].concat(timeline.map(get('row')))}
             style={{

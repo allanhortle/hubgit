@@ -5,28 +5,35 @@ import program from 'commander';
 import CoreView from './core/CoreView';
 import {Repository, Remote} from 'nodegit';
 import path from 'path';
-import gitUrlParse from 'git-url-parse';
 import {red, gray} from 'chalk';
 import Ref from './ref/data/Ref';
+import parseGitUrl from './util/parseGitUrl';
+
+
+global.exitLog = (...val) => {
+    // eslint-disable-next-line
+    console.log(...val);
+    process.exit(0);
+}
 
 
 program
     .version(pkg.version)
-    .arguments('[view] [viewIndex]')
+    .arguments('[command]')
     .option('-v, --verbose', 'be verbose')
     .option('-r, --repo <repo>', 'any repo like url or path. E.g: facebook/react, https://github.com/facebook/react')
-    .action(async (view, viewIndex, program) => {
-        let repoData;
+    .action(async (command, program) => {
+        let repo;
         if(program.repo) {
-            repoData = gitUrlParse(program.repo);
+            repo = parseGitUrl(program.repo);
         } else {
             try {
-                const repo = await Repository.open(path.join(process.cwd(), ".git"));
-                const branch = await repo.getCurrentBranch();
-                const remotes = await Remote.list(repo);
-                const firstRemote = await Remote.lookup(repo, remotes[0]);
-                repoData = gitUrlParse(firstRemote.url());
-                repoData.ref = Ref.fromQualifiedName(branch.name());
+                const repository = await Repository.open(path.join(process.cwd(), ".git"));
+                const branch = await repository.getCurrentBranch();
+                const remotes = await Remote.list(repository);
+                const firstRemote = await Remote.lookup(repository, remotes[0]);
+                repo = parseGitUrl(firstRemote.url());
+                repo.ref = Ref.fromQualifiedName(branch.name());
             } catch (e) {
                 // eslint-disable-next-line
                 console.log(`${red('error')} No repo was found.`);
@@ -37,9 +44,8 @@ program
         }
 
         CoreView({
-            view,
-            viewIndex,
-            repoData,
+            repo,
+            command,
             program
         });
     });

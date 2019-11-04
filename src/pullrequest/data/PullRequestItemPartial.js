@@ -3,6 +3,7 @@ const idDate = `
 id
 createdAt
 `;
+import TimelineItemsPartial from '../../core/data/TimelineItemsPartial';
 export default `
     ${idDate}
     additions
@@ -30,129 +31,23 @@ export default `
     }}
     timelineItems(last: 100) { nodes {
         __typename
-        ... on PullRequestCommit {
-            commit {
-                id
-                committedDate
-                authoredDate
-                author {user {login}}
-                message
-                oid
-            }
-        }
-        ... on HeadRefForcePushedEvent {
-            ${idDate}
-            ref {name}
-            beforeCommit {abbreviatedOid}
-            afterCommit {abbreviatedOid}
-            actor {login}
-        }
-        ... on MergedEvent {
-            ${idDate}
-            mergeRefName
-            commit {abbreviatedOid}
-            actor {login}
-        }
-        ... on ClosedEvent {
-            ${idDate}
-            actor {login}
-        }
-        ... on ReopenedEvent {
-            ${idDate}
-            actor {login}
-        }
-        ... on HeadRefDeletedEvent {
-            actor {login}
-            ${idDate}
-            headRefName
-        }
-        ... on ReferencedEvent {
-            actor {login}
-            ${idDate}
-            commit {message}
-        }
-        ... on CrossReferencedEvent  {
-            actor {login}
-            ${idDate}
-            source {
-            ... on PullRequest {
-                title
-                url
-            }
-            ... on Issue {
-                title
-                url
-            }
-            }
-        }
-        ... on LabeledEvent  {
-            ${idDate}
-            actor {login}
-            label {
-            color
-            name
-            }
-        }
-        ... on PullRequestReview {
-            ${idDate}
-            state
-            body
-            author {login}
-            url
-            comments(last: 100) {
-                totalCount
-                nodes {
-                    id
-                    __typename
-                    diffHunk
-                    outdated
-                    path
-                    author {login}
-                    createdAt
-                    body
-                }
-            }
-        }
-        ... on PullRequestCommitCommentThread {
-            commit {
-                authoredDate
-                abbreviatedOid
-                message
-            }
-            comments(first:100) {
-                totalCount
-                nodes {
-                    createdAt
-                    author {login}
-                    body
-                }
-            }
-        }
-        ... on IssueComment {
-            ${idDate}
-            body
-            author {login}
-        }
-        ... on RenamedTitleEvent {
-            ${idDate}
-            actor {login}
-            previousTitle
-            currentTitle
-        }
-        ... on ReviewRequestedEvent {
-            ${idDate}
-            actor {login}
-            requestedReviewer {
-                ... on User {login}
-            }
-        }
-        ... on ReadyForReviewEvent {
-            ${idDate}
-            actor {login}
-        }
-
-        ... on PullRequestRevisionMarker {
-            createdAt
-        }
+        ${TimelineItemsPartial([
+        'PullRequestCommit',
+        'HeadRefForcePushedEvent',
+        'MergedEvent',
+        'ClosedEvent',
+        'ReopenedEvent',
+        'HeadRefDeletedEvent',
+        'ReferencedEvent',
+        'CrossReferencedEvent' ,
+        'LabeledEvent' ,
+        'PullRequestReview',
+        'PullRequestCommitCommentThread',
+        'IssueComment',
+        'RenamedTitleEvent',
+        'ReviewRequestedEvent',
+        'ReadyForReviewEvent',
+        'PullRequestRevisionMarker'
+        ])}
     }}
 `;

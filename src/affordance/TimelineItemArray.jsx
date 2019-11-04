@@ -2,8 +2,9 @@
 import type {ComponentType} from 'react';
 import getIn from 'unmutable/lib/getIn';
 import pipeWith from 'unmutable/lib/util/pipeWith';
-import {blue, red, green, magenta, grey, yellow, date, cyan} from '../util/tag';
+import {blue, label, red, green, magenta, grey, yellow, date, cyan} from '../util/tag';
 import flatMap from 'unmutable/flatMap';
+import Markdown from './Markdown';
 
 // views
 import PullRequestReview from '../pullrequest/PullRequestReview';
@@ -41,8 +42,8 @@ function Item(item) {
             color(message || '') || grey(__typename)
         ];
         const childProps = {
+            title: row.slice(0, 3).join(' '),
             ...viewProps,
-            title: row.join(' '),
             row
         };
 
@@ -71,10 +72,12 @@ function Item(item) {
             })];
         }
         case 'HeadRefForcePushedEvent': {
+            const {pullRequest} = item;
+            const prefix = pullRequest.headRepositoryOwner ? `${pullRequest.headRepositoryOwner.login}:` : '';
             return [row({
                 color: cyan,
                 icon: '⤒',
-                message: `Force-pushed ${item.ref.name} from ${item.beforeCommit.abbreviatedOid} to ${item.afterCommit.abbreviatedOid}`
+                message: `Force-pushed ${prefix}${pullRequest.headRefName} from ${item.beforeCommit.abbreviatedOid} to ${item.afterCommit.abbreviatedOid}`
             })];
         }
         case 'HeadRefDeletedEvent': {
@@ -137,14 +140,18 @@ function Item(item) {
         case 'PullRequestReviewComment': {
             return [row({
                 icon: '"',
-                message: body
+                message: body,
+                view: Markdown,
+                viewProps: {markdown: body}
             })];
         }
 
         case 'PullRequestCommitCommentThread': {
             return item.comments.nodes.map((node) => row({
                 icon: '"',
-                message: node.body
+                message: node.body,
+                view: Markdown,
+                viewProps: {markdown: node.body}
             }, node));
         }
 
@@ -152,7 +159,9 @@ function Item(item) {
             return [row({
                 actor: ['author', 'login'],
                 icon: '"',
-                message: item.body
+                message: item.body,
+                view: Markdown,
+                viewProps: {markdown: item.body}
             })];
         }
 
@@ -170,7 +179,7 @@ function Item(item) {
         case 'LabeledEvent': {
             return [row({
                 icon: '#',
-                message: `Added label: {#${item.label.color}-bg}{black-fg}${item.label.name}{/}`
+                message: `Added label: ${label(item.label)}`
             })];
         }
         case 'MergedEvent': {

@@ -47,7 +47,8 @@
     "chalk": "^2.4.2",
     "commander": "^3.0.0",
     "date-fns": "^2.6.0",
-    "git-url-parse": "^11.1.2",
+    "git-up": "^4.0.1",
+    "mdast-util-to-string": "^1.0.6",
     "neo-blessed": "^0.2.0",
     "node-fetch": "^2.6.0",
     "nodegit": "^0.25.1",
@@ -57,8 +58,10 @@
     "react-devtools-core": "^3.6.3",
     "react-dom": "^16.9.0",
     "react-enty": "^1.0.0-alpha.6",
+    "remark": "^11.0.1",
     "simple-git": "^1.126.0",
     "unfunctional": "^0.1.0",
+    "unist-util-visit": "^2.0.0",
     "unmutable": "^0.46.0"
   }
 }

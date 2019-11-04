@@ -9,16 +9,16 @@ import PullRequestItemStructure from './PullRequestItemStructure';
 
 type Props = {
     viewIndex: number,
-    repo: {owner: string, name: string}
+    repo: {owner: string, name: string, viewIndex: number}
 };
 export default function PullItem(props: Props) {
-    const {viewIndex} = props;
     const {owner, name} = props.repo;
+    const viewIndex = props.viewIndex || props.repo.viewIndex;
 
     const message = Api.repo.pullItem.useRequest();
 
     useEffect(() => {
-        message.onRequest({number: parseInt(viewIndex), owner, name});
+        message.onRequest({number: viewIndex, owner, name});
     }, []);
 
     return <LoadingBoundary message={message}>

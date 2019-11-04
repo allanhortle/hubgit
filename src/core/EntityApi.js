@@ -5,8 +5,8 @@ import {graphql as github} from '../service/Github';
 import {diff} from '../service/Github';
 import PullQuery from '../pullrequest/data/PullQuery';
 import PullListQuery from '../pullrequest/data/PullListQuery';
-import IssueQuery from './data/IssueQuery';
-import IssueListQuery from './data/IssueListQuery';
+import IssueQuery from '../issue/data/IssueItemQuery';
+import IssueListQuery from '../issue/data/IssueListQuery';
 import ReleaseQuery from './data/ReleaseQuery';
 import ReleaseListQuery from './data/ReleaseListQuery';
 
@@ -52,13 +52,18 @@ const straightQueries = [
     ['repo.pullList', PullListQuery],
     ['repo.pullRequestReview', PullRequestReviewQuery],
     ['repo.pullRequestFromRef', PullRequestFromRefQuery],
-    ['repo.issue', IssueQuery],
-    ['repo.issueList', IssueListQuery],
-    ['repo.release', ReleaseQuery],
-    ['repo.releaseList', ReleaseListQuery],
+
+    // Releases
+    ['release.item', ReleaseQuery],
+    ['release.list', ReleaseListQuery],
 
     // Refs
     ['ref.list', RefListQuery],
+
+    // Issues
+    ['issue.item', IssueQuery],
+    ['issue.list', IssueListQuery],
+
 
     // Pull Requests
     ['pullRequest.create', CreatePullRequestMutation],

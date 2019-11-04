@@ -2,17 +2,16 @@
 import React, {useEffect, useState} from 'react';
 import LoadingBoundary from '../core/LoadingBoundary';
 import Api from '../core/EntityApi';
-import getIn from 'unmutable/lib/getIn';
+import pipeWith from 'unmutable/pipeWith';
+import map from 'unmutable/map';
 import PullrequestItem from './PullrequestItem';
-import {yellow, state as colorState} from '../util/tag';
+import {yellow, date, ellipsis, state as colorState} from '../util/tag';
 import {useCoreContext} from '../core/CoreContext';
 
 export default function PullList() {
     const message = Api.repo.pullList.useRequest();
     const {pushStack, repo:{owner, name}} = useCoreContext();
     const [selected, setSelected] = useState(1);
-
-    const list = getIn(['repository', 'pullRequests']);
 
     useEffect(() => {
         message.onRequest({owner, name});
@@ -21,7 +20,7 @@ export default function PullList() {
 
     return <LoadingBoundary message={message}>
         {(data) => {
-            const plainList = list(data).edges.map(ii => ii.node);
+            const pulls = data.repository.pullRequests.nodes;
 
             return <listtable
                 align="left"
@@ -43,20 +42,25 @@ export default function PullList() {
                         bg: 'blue'
                     }
                 }}
-                rows={
-                    [['#', 'Author', 'Branch', 'Status', 'Name', 'Comments', 'Activty']].concat(plainList.map(ii => [
-                        `${ii.number}`,
-                        yellow(ii.author.login),
-                        `${ii.headRefName}`,
-                        colorState(ii.state),
-                        ii.title,
-                        `${ii.comments.totalCount + ii.reviewThreads.edges.reduce((rr, item) => rr + item.node.comments.totalCount, 0)}`,
-                        ii.timelineItems.totalCount.toString()
-                    ]))
-                }
+                rows={[
+                    ['', 'Last Updated', 'Author', 'Branch', 'Status', 'Name', '?', '*'],
+                    ...pipeWith(
+                        pulls,
+                        map(ii => [
+                            String(ii.number),
+                            date(ii.updatedAt),
+                            yellow(ii.author.login),
+                            ellipsis(ii.headRefName, 30),
+                            colorState(ii.state),
+                            ellipsis(ii.title, 40),
+                            `${ii.comments.totalCount + ii.reviewThreads.nodes.reduce((rr, item) => rr + item.comments.totalCount, 0)}`,
+                            ii.timelineItems.totalCount.toString()
+                        ])
+                    )
+                ]}
                 onSelect={(_, index) =>  {
                     setSelected(index);
-                    const {number, title} = plainList[index - 1] || {};
+                    const {number, title} = pulls[index - 1] || {};
                     pushStack(PullrequestItem, {viewIndex: number, title});
                 }}
             />;
@@ -64,4 +68,3 @@ export default function PullList() {
     </LoadingBoundary>;
 }
 
-PullList.label = () => "Pull Requests";
