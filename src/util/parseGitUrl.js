@@ -27,6 +27,7 @@ export default function parseGitUrl(url: string): GitUrl {
     const remote = gitUp(url);
     const {protocol, resource, pathname} = remote;
     const [, owner, name, view, viewIndex] = pathname.replace(/\.git$/, '').split('/');
+
     return {
         protocol,
         resource,

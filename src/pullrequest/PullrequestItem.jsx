@@ -8,6 +8,7 @@ import PullRequest from './data/PullRequest';
 import PullRequestItemStructure from './PullRequestItemStructure';
 
 type Props = {
+    viewIndex: number,
     repo: {owner: string, name: string, viewIndex: number}
 };
 export default function PullItem(props: Props) {

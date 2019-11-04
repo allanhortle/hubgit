@@ -12,6 +12,7 @@ export type CoreContextType = {
     popStack: () => void,
     pushStack: (ComponentType<StackItemProps>, StackItemProps) => void,
     replaceStack: (ComponentType<StackItemProps>, StackItemProps) => void,
+    setProps: <A>(A) => void,
     repo: {
         owner: string,
         name: string,
@@ -31,6 +32,7 @@ const CoreContext = createContext<CoreContextType>({
     popStack: () => {},
     pushStack: () => {},
     replaceStack: () => {},
+    setProps: () => {},
     repo: {},
     screen: {},
     stack: new Stack([]),

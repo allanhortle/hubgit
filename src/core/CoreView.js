@@ -20,6 +20,8 @@ import PullrequestList from '../pullrequest/PullrequestList';
 import RepoView from '../repo/RepoView';
 import ReleasesView from '../repo/ReleasesView';
 import Stack from './data/Stack';
+import IssueListView from '../issue/IssueListView';
+import IssueItemView from '../issue/IssueItemView';
 
 type Props = {};
 
@@ -33,7 +35,7 @@ function content(repo): StackItem {
         return viewIndex ? item(PullrequestItem) : item(PullrequestList, {title: 'Pull Requests'});
     }
     if(view === 'issues' || view === 'issue') {
-        return viewIndex ? item(PullrequestItem) : item(IssueListView, {title: 'Issues'});
+        return viewIndex ? item(IssueItemView, {number: viewIndex}) : item(IssueListView, {title: 'Issues'});
     }
     if(repo.ref) return item(PullrequestItemFromRef);
     return item(() => <box>404 View not found</box>);
@@ -47,9 +49,11 @@ export default pipe(
             constructor(props) {
                 super(props);
                 this.setContext = (data) => this.setState(data);
-                const pushStack = (component, props) => this.setState(update('stack', _ => _.push({component, props})));
-                const replaceStack = (component, props) => this.setState(update('stack', _ => _.replace({component, props})));
-                const popStack = () => this.setState(update('stack', _ => _.pop()));
+                const updateStack = (fn) => this.setState(update('stack', fn));
+                const pushStack = (component, props) => updateStack(_ => _.push({component, props}));
+                const replaceStack = (component, props) => updateStack(_ => _.replace({component, props}));
+                const popStack = () => updateStack(_ => _.pop());
+                const setProps = (fn) => updateStack(s => s.setProps(fn));
 
                 CoreScreen.key(['q'], () => {
                     if(this.state.stack.length === 1) {
@@ -68,6 +72,7 @@ export default pipe(
                     pushStack,
                     popStack,
                     replaceStack,
+                    setProps,
                     screen: CoreScreen
                 };
             }

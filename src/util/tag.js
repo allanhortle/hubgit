@@ -37,13 +37,22 @@ export const {
     white,
     whiteBg
 } = colors;
-export const grey= (content: string) => `{#666-fg}${content}{/}`;
+export const grey = (content: string) => `{#666-fg}${content}{/}`;
 
 export const center = (text: string) => `{center}${text}{/center}`;
 export const left = (text: string) => `{left}${text}{/left}`;
 export const right = (text: string) => `{right}${text}{/right}`;
 export const split = (a: string, b: string) => a + '{|}' + b;
 export const title = (text: string) => center(whiteBg(black(text)));
+
+
+export const bold = (a: string) => `{bold}${a}{/}`;
+export const italic = bold;
+export const underline = (a: string) => `{underline}${a}{/}`;
+export const blink = (a: string) => `{underline}${a}{/}`;
+export const inverse = (a: string) => `{underline}${a}{/}`;
+export const invisible = (a: string) => `{underline}${a}{/}`;
+//""
 
 export const date = (str: string) => {
     try {
@@ -99,4 +108,8 @@ export function ellipsis(string: string, limit: number): string {
         ? `${string.slice(0, limit)}...`
         : string
     ;
+}
+
+export function label({name, color}: {name: string, color: string}): string {
+    return `{#${color}-fg}${name}{/}`;
 }

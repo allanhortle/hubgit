@@ -4,11 +4,8 @@ import {ObjectSchema} from 'react-enty';
 import {EntitySchema} from 'react-enty';
 import {ArraySchema} from 'react-enty';
 
-var repo = new EntitySchema('repo');
-var repoList = new ArraySchema(repo);
+var issue = new EntitySchema('issue');
+var issues = new ArraySchema(issue);
+issue.shape = new ObjectSchema({});
 
-repo.shape = new ObjectSchema({});
-
-export default new ObjectSchema<{}>({
-    repoList
-});
+export default new ObjectSchema<{}>({});
