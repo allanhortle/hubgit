@@ -113,3 +113,4 @@ export function ellipsis(string: string, limit: number): string {
 export function label({name, color}: {name: string, color: string}): string {
     return `{#${color}-fg}${name}{/}`;
 }
+export const link = pipe(blue, underline);
