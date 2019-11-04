@@ -29,7 +29,10 @@ export const graphql = async (name: string, vars: {}, query: string): Promise<mi
     log(name, 'start');
     return githubGraphql(query, {
         ...vars,
-        headers: {authorization}
+        headers: {
+            authorization,
+            accept: 'application/vnd.github.antiope-preview+json' // Checks preview
+        }
     })
         .then(data => {
             const end = +new Date();

@@ -16,6 +16,19 @@ type PullRequestShape = {
     pullRequestReviewThreadMap: {
         [string]: {id: string}
     },
+    commits: {
+        nodes: Array<{
+            commit: {
+                oid: string,
+                checkSuites: {
+                    nodes: Array<{
+                        status: string,
+                        conclusion: string
+                    }>
+                }
+            }
+        }>
+    },
     reviewThreads: {
         nodes: Array<{
             comments: {
@@ -89,6 +102,9 @@ export default class PullRequest {
     }
     get body() {
         return this._data.body;
+    }
+    get commits() {
+        return this._data.commits;
     }
     get createdAt() {
         return this._data.createdAt;

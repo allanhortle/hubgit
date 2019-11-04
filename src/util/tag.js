@@ -75,6 +75,29 @@ export function state(val: string) {
     }
 }
 
+export function check({status, conclusion}: {status: string, conclusion: string}): string {
+    if(status !== 'COMPLETED') {
+        return yellow('~');
+    }
+
+    switch (conclusion) {
+        case 'SUCCESS':
+            return green('✔');
+
+        case 'NEUTRAL':
+            return grey('-');
+
+        case 'ACTION_REQUIRED':
+        case 'CANCELLED':
+        case 'FAILURE':
+        case 'TIMED_OUT':
+        default:
+            return red('×');
+    }
+}
+
+
+
 export function changes(props: {additions: number, deletions: number}): string {
     return `${green('+' + props.additions)} ${red('-' + props.deletions)}`;
 }
