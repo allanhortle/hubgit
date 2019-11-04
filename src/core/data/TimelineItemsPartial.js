@@ -19,7 +19,10 @@ export default function TimelineItemsPartial(types: Array<string>): string {
         }`,
         HeadRefForcePushedEvent: `... on HeadRefForcePushedEvent {
             ${idDate}
-            ref {name}
+            pullRequest {
+                headRefName
+                headRepositoryOwner {login}
+            }
             beforeCommit {abbreviatedOid}
             afterCommit {abbreviatedOid}
             actor {login}

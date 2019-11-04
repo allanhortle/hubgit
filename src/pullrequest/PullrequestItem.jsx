@@ -12,7 +12,8 @@ type Props = {
     repo: {owner: string, name: string, viewIndex: number}
 };
 export default function PullItem(props: Props) {
-    const {owner, name, viewIndex} = props.repo;
+    const {owner, name} = props.repo;
+    const viewIndex = props.viewIndex || props.repo.viewIndex;
 
     const message = Api.repo.pullItem.useRequest();
 

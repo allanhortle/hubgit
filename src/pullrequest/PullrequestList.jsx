@@ -2,7 +2,6 @@
 import React, {useEffect, useState} from 'react';
 import LoadingBoundary from '../core/LoadingBoundary';
 import Api from '../core/EntityApi';
-import getIn from 'unmutable/getIn';
 import pipeWith from 'unmutable/pipeWith';
 import map from 'unmutable/map';
 import PullrequestItem from './PullrequestItem';
@@ -13,8 +12,6 @@ export default function PullList() {
     const message = Api.repo.pullList.useRequest();
     const {pushStack, repo:{owner, name}} = useCoreContext();
     const [selected, setSelected] = useState(1);
-
-    const list = getIn(['repository', 'pullRequests']);
 
     useEffect(() => {
         message.onRequest({owner, name});
@@ -49,8 +46,6 @@ export default function PullList() {
                     ['', 'Last Updated', 'Author', 'Branch', 'Status', 'Name', '?', '*'],
                     ...pipeWith(
                         pulls,
-                        //sortBy(ii => ii.state),
-                        //reverse(),
                         map(ii => [
                             String(ii.number),
                             date(ii.updatedAt),
