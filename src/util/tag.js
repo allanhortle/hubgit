@@ -77,7 +77,7 @@ export function state(val: string) {
 
 export function check({status, conclusion}: {status: string, conclusion: string}): string {
     if(status !== 'COMPLETED') {
-        return yellow('~');
+        return yellow('•');
     }
 
     switch (conclusion) {

@@ -53,7 +53,7 @@ export default function PullList() {
                             date(ii.updatedAt),
                             yellow(ii.author.login),
                             ellipsis(ii.headRefName, 30),
-                            `${colorState(ii.state)} ${maybePipe(getIn(['commits', 'nodes', 0, 'commit', 'checkSuites', 'nodes', 0]), check)(ii) || ''}`,
+                            `${maybePipe(getIn(['commits', 'nodes', 0, 'commit', 'checkSuites', 'nodes', 0]), check)(ii) || ' '} ${colorState(ii.state)}`,
                             ellipsis(ii.title, 40),
                             `${ii.comments.totalCount + ii.reviewThreads.nodes.reduce((rr, item) => rr + item.comments.totalCount, 0)}`,
                             ii.timelineItems.totalCount.toString()

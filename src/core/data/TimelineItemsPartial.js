@@ -15,6 +15,10 @@ export default function TimelineItemsPartial(types: Array<string>): string {
                 author {user {login}}
                 message
                 oid
+                checkSuites(last: 20) { nodes {
+                    status
+                    conclusion
+                }}
             }
         }`,
         HeadRefForcePushedEvent: `... on HeadRefForcePushedEvent {
