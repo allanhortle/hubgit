@@ -14,9 +14,8 @@ const colors = [
     'cyan',
     'white'
 ].reduce((rr, color) => {
-    const escaped = (fn) => (content: string, escape?: boolean = false) => escape ? blessed.escape(fn(content)) : fn(content);
-    rr[color] = escaped((content: string) => `{${color}-fg}${content}{/${color}-fg}`);
-    rr[`${color}Bg`] = escaped((content: string) => `{${color}-bg}${content}{/${color}-bg}`);
+    rr[color] = (content: string, escape?: boolean) => `{${color}-fg}${escape ? blessed.escape(content) : content}{/${color}-fg}`;
+    rr[`${color}Bg`] = (content: string, escape?: boolean) => `{${color}-bg}${escape ? blessed.escape(content) : content}{/${color}-bg}`;
     return rr;
 }, {});
 

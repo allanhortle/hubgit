@@ -42,16 +42,15 @@ export default function PullItem(props: Props) {
     const timeline = pipeWith(
         timelineItems.nodes,
         TimelineItemArray,
+        sortBy(ii => ii.row[0]),
         _ => [
             {
                 row: [date(createdAt), yellow(author.login), '#', description],
                 view: Markdown,
                 viewProps: {title: 'Description', markdown: body}
             }
-        ].concat(_),
-        sortBy(ii => ii.row[0])
+        ].concat(_)
     );
-
 
     return <box bottom={0} top={0}>
         <box tags top={1} height={1} content={`  ${colorState(state)}  ${blue(headRefName)} into ${blue(baseRefName)}  ${green('+'+additions)} ${red('-'+deletions)}  ${url}`} />

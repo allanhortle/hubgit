@@ -193,14 +193,14 @@ function Item(item) {
             return [row({
                 color: red,
                 icon: '☇',
-                message: `Closed the pull request`
+                message: `Closed`
             })];
         }
         case 'ReopenedEvent': {
             return [row({
                 color: green,
                 icon: '☇',
-                message: `Reopened the pull request`
+                message: `Reopened`
             })];
         }
         case 'CrossReferencedEvent': {

@@ -17,6 +17,9 @@ import ClosePullRequestMutation from '../pullrequest/data/ClosePullRequestMutati
 import CreatePullRequestMutation from '../pullrequest/data/CreatePullRequestMutation';
 import MergePullRequestMutation from '../pullrequest/data/MergePullRequestMutation';
 
+import ReopenIssueMutation from '../issue/data/ReopenIssueMutation';
+import CloseIssueMutation from '../issue/data/CloseIssueMutation';
+
 import RefListQuery from '../ref/data/RefListQuery';
 
 import CommitItemQuery from '../commit/data/CommitItemQuery';
@@ -60,16 +63,18 @@ const straightQueries = [
     // Refs
     ['ref.list', RefListQuery],
 
-    // Issues
-    ['issue.item', IssueQuery],
-    ['issue.list', IssueListQuery],
-
 
     // Pull Requests
     ['pullRequest.create', CreatePullRequestMutation],
     ['pullRequest.close', ClosePullRequestMutation],
     ['pullRequest.reopen', ReopenPullRequestMutation],
     ['pullRequest.merge', MergePullRequestMutation],
+
+    // Issues
+    ['issue.item', IssueQuery],
+    ['issue.list', IssueListQuery],
+    ['issue.close', CloseIssueMutation],
+    ['issue.reopen', ReopenIssueMutation],
 
     // commit
     ['commitItem', takeFirst(async (props) => {
