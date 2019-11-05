@@ -15,18 +15,19 @@ type Props = {
     id: string
 };
 export default function PullRequestCreate(props: Props) {
-    const {pushStack, replaceStack, repo: {owner, name}} = useCoreContext();
+    const {replaceStack, repo: {owner, name}} = useCoreContext();
     const {reference, id} = props;
 
-    const form = useRef();
+    const form = useRef({
+        submit: () => {},
+        submission: {}
+    });
     const branchList = Api.ref.list.useRequest();
     const create = Api.pullRequest.create.useRequest();
 
     useEffect(() => {
         branchList.onRequest({owner, name});
     }, []);
-
-    const onNo = () => pushStack(PullrequestList, {title: 'Pull Requests'});
 
 
 
@@ -38,7 +39,7 @@ export default function PullRequestCreate(props: Props) {
 
                 const onSubmit = async () => {
                     form.current.submit();
-                    const {submission} = form.current || {};
+                    const {submission} = form.current;
                     create
                         .onRequest({input: {
                             headRefName: reference.name,
@@ -54,12 +55,11 @@ export default function PullRequestCreate(props: Props) {
                         });
                 };
 
-                log(create);
-
                 return create.requestState
                     .emptyMap(() => {
                         return <box>
                             <box tags top={1} content={`  No pull request found for ${blue(reference.name)}`}/>
+                            {/* $FlowFixMe */}
                             <form keys vi ref={form} top={3} width="100%-2">
                                 <textbox name="title" focused inputOnFocus keys mouse top={0} left={1}  border="line" height={3} label="Title"  />
                                 <textarea name="body" inputOnFocus keys mouse top={3} height={7} left={1}  border="line" label="Description"  />
@@ -80,7 +80,7 @@ export default function PullRequestCreate(props: Props) {
                     .fetchingMap(() => 'Loading...')
                     .refetchingMap(() => 'Loading...')
                     .errorMap(() => create.requestError.message)
-                    .value()
+                    .value();
             }
         )}
     </LoadingBoundary>;

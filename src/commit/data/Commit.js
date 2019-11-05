@@ -1,15 +1,21 @@
 // @flow
+import type {ConnectionShape as Connection} from '../../core/data/Connection';
 type CommitShape = {
     additions: number,
     author: {name: string, email: string, date: string},
     committer: {name: string, email: string, date: string},
     changedFiles: number,
+    checkSuites: Connection<{
+        status: string,
+        conclusion: string
+    }>,
     deletions: number,
     diff: string,
     message: string,
     messageBody: string,
     messageHeadline: string,
-    oid: string
+    oid: string,
+    url: string
 };
 
 export default class Commit {
@@ -30,6 +36,9 @@ export default class Commit {
     }
     get changedFiles() {
         return this._data.changedFiles;
+    }
+    get checkSuites() {
+        return this._data.checkSuites;
     }
     get committer() {
         return this._data.committer;

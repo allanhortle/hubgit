@@ -1,6 +1,6 @@
 // @flow
 import React  from 'react';
-import {green, blue, magenta, underline, bold, yellow, link} from '../util/tag';
+import {green, blue, magenta, bold, yellow, link} from '../util/tag';
 import remark from 'remark';
 import {pipe} from 'unfunctional';
 import visit from 'unist-util-visit';
@@ -17,11 +17,10 @@ const visitNode = (tree, type, fn) => {
         node.children = undefined;
         return node;
     });
-}
+};
 
 export default function Markdown({markdown}: Props) {
-    const processor = remark()
-        .data('settings', {gfm: true})
+    const processor = remark().data('settings', {gfm: true});
     const tree = processor.parse(markdown);
 
     visitNode(tree, 'heading', ({depth, children}) => yellow(`${'#'.repeat(depth)} ${children[0].value}`));
@@ -34,7 +33,7 @@ export default function Markdown({markdown}: Props) {
                 const {checked} = ii;
                 const prefix = yellow(ordered ? `${index + start}.` : '*');
                 const check = (checked == null) ? '' : checked ? '[x] ' : '[ ] ';
-                return `${prefix} ${check}${toString(ii)}`
+                return `${prefix} ${check}${toString(ii)}`;
             })
             .join('\n');
     });
@@ -48,7 +47,7 @@ export default function Markdown({markdown}: Props) {
         const text = toString(node);
         const title = node.title ? ` "${green(node.title)}"` : '';
         return `[${green(text)}](${link(node.url)}${title})`;
-    })
+    });
 
     let content = processor.stringify(tree);
     content = content.replace(/\\([[`*])/g, '$1'); //`

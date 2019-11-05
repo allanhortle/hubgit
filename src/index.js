@@ -14,8 +14,7 @@ global.exitLog = (...val) => {
     // eslint-disable-next-line
     console.log(...val);
     process.exit(0);
-}
-
+};
 
 program
     .version(pkg.version)

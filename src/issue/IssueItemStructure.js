@@ -18,24 +18,12 @@ export default (props: Props) => {
         state,
         timelineItems,
         title,
-        number,
-        body,
-        createdAt,
-        author
+        number
     } = issueItem;
-
-    //const description = body ? 'Description: ' + body.replace(/\n|\r/g, ' ') : 'No Description';
 
     const timeline = pipeWith(
         timelineItems.nodes,
         TimelineItemArray,
-        //_ => [
-            //{
-                //row: [date(createdAt), yellow(author.login), '#', description],
-                //view: Markdown,
-                //viewProps: {title: 'Description', markdown: body}
-            //}
-        //].concat(_),
         sortBy(ii => ii.row[0])
     );
 

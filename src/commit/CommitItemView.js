@@ -9,7 +9,8 @@ import pipe from 'unmutable/pipe';
 import getIn from 'unmutable/getIn';
 
 type Props = {
-    id: string
+    id: string,
+    oid: string
 };
 export default function CommitItemView(props: Props) {
     const {id, oid} = props;

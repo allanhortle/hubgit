@@ -3,7 +3,6 @@ import {EntityApi} from 'react-enty';
 import ApplicationSchema from './ApplicationSchema';
 import {graphql as github} from '../service/Github';
 import {diff} from '../service/Github';
-import {rest} from '../service/Github';
 import PullQuery from '../pullrequest/data/PullQuery';
 import PullListQuery from '../pullrequest/data/PullListQuery';
 import IssueQuery from '../issue/data/IssueItemQuery';

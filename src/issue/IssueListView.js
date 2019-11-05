@@ -1,4 +1,6 @@
 // @flow
+import type {RepoShape as Repo} from '../core/data/Repo';
+
 import React, {useEffect} from 'react';
 import map from 'unmutable/map';
 import pipe from 'unmutable/pipe';
@@ -21,7 +23,7 @@ export default (props: Props) => {
 
     const issueList = Api.issue.list.useRequest();
 
-    const onSelect = (row) => {
+    const onSelect = (row: Array<string|{tag: string, value: mixed}>) => {
         const number = parseInt(row[0]);
         pushStack(IssueItemView, {number, title: `#${number}`});
     };

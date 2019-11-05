@@ -28,7 +28,7 @@ export default function PullRequestCommandView(props: Props) {
         {row: ['o', 'Re-open'], action: actionPop(reopen, {id})},
         {row: ['c', 'Comment'], action: popStack},
         {row: ['s', 'Merge - Squash'], action: () => {}},
-        {row: ['R', 'Merge - Rebase'], action: () => {}},
+        {row: ['R', 'Merge - Rebase'], action: () => {}}
     ];
 
     useEffect(() => {

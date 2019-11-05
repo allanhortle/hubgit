@@ -10,7 +10,7 @@ export default class Ref {
         this._data = data;
     }
     static fromQualifiedName(str: string): Ref {
-        const [,prefix, name] = str.match(/(.*?\/.*?\/)(.*)/);
+        const [, prefix, name] = str.match(/(.*?\/.*?\/)(.*)/) || [];
         return new Ref({name, prefix});
     }
 
@@ -21,8 +21,8 @@ export default class Ref {
     get prefix() {
         return this._data.prefix;
     }
-	get qualifiedName() {
-		const {name, prefix} = this._data;
-		return prefix + name;
-	}
+    get qualifiedName() {
+        const {name, prefix} = this._data;
+        return prefix + name;
+    }
 }

@@ -8,3 +8,4 @@ all=error
 untyped-type-import=off
 untyped-import=off
 unsafe-getters-setters=off
+sketchy-null=off

@@ -14,8 +14,9 @@ const colors = [
     'cyan',
     'white'
 ].reduce((rr, color) => {
-    rr[color] = (content: string) => `{${color}-fg}${content}{/${color}-fg}`;
-    rr[`${color}Bg`] = (content: string, escape?: boolean) => `{${color}-bg}${escape ? blessed.escape(content) : content}{/${color}-bg}`;
+    const escaped = (fn) => (content: string, escape?: boolean = false) => escape ? blessed.escape(fn(content)) : fn(content);
+    rr[color] = escaped((content: string) => `{${color}-fg}${content}{/${color}-fg}`);
+    rr[`${color}Bg`] = escaped((content: string) => `{${color}-bg}${content}{/${color}-bg}`);
     return rr;
 }, {});
 
@@ -104,7 +105,7 @@ export function changes(props: {additions: number, deletions: number}): string {
 
 type DiffProps = {
     highlightLine?: number,
-    window?: [number, numer]
+    window?: [number, number]
 };
 export function diff(text: string, props?: DiffProps = {}): string {
     let textArray = text

@@ -3,12 +3,15 @@ import React from 'react';
 import map from 'unmutable/map';
 import * as t from '../util/tag';
 
+export type ListTableColumn = string|{tag: string, value: mixed};
+export type ListTableRow = Array<ListTableColumn>;
+
 type Props = {
     selected?: number,
-    rows: Array<Array<string|{tag: string, value: mixed}>>,
+    rows: Array<ListTableRow>,
     head: string[],
-    onSelect?: (mixed, number) => void,
-    onSelectItem?: (mixed, number) => void,
+    onSelect?: (ListTableRow, number) => void,
+    onSelectItem?: (ListTableRow, number) => void,
     top?: number
 };
 export default function ListTable(props: Props) {

@@ -6,7 +6,7 @@ import {ellipsis} from '../util/tag';
 
 type Props = {
     issueList: Array<Issue>,
-    onSelect: (mixed, number) => void
+    onSelect: (Array<string|{tag: string, value: mixed}>, number) => void
 };
 export default (props: Props) => {
     const {issueList, onSelect} = props;
