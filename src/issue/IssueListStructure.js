@@ -6,14 +6,14 @@ import {ellipsis} from '../util/tag';
 
 type Props = {
     issueList: Array<Issue>,
-    onSelect: (Array<string|{tag: string, value: mixed}>, number) => void
+    onSelect: (Array<string|{+tag: string, +value: mixed}>, number) => void
 };
 export default (props: Props) => {
     const {issueList, onSelect} = props;
     return <box>
         <ListTable
             onSelect={onSelect}
-            head={['#', 'State', 'Labels', 'Title', 'Last Updated']}
+            head={['#', 'State', 'Titles', 'Labels', 'Last Updated']}
             rows={issueList.map(ii => [
                 `${ii.number}`,
                 {tag: 'state', value: ii.state},

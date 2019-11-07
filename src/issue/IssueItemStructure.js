@@ -5,18 +5,20 @@ import ListTable from '../affordance/ListTable';
 import Markdown from '../affordance/Markdown';
 import TimelineItemArray from '../affordance/TimelineItemArray';
 import * as t from '../util/tag';
+import useCommandList from '../util/useCommandList';
 import sortBy from 'unmutable/sortBy';
 import pipeWith from 'unmutable/pipeWith';
 import {useCoreContext} from '../core/CoreContext';
-import IssueCommandView from './IssueCommandView';
+import Api from '../core/EntityApi';
 
 type Props = {
     issueItem: Issue
 };
 export default (props: Props) => {
     const {issueItem} = props;
-    const {pushStack, screen} = useCoreContext();
+    const {pushStack} = useCoreContext();
     const {
+        id,
         state,
         timelineItems,
         title,
@@ -26,10 +28,16 @@ export default (props: Props) => {
         body
     } = issueItem;
 
-    useEffect(() => {
-        screen.onceKey([':'], () => pushStack(IssueCommandView, {title: 'Commands', issue: issueItem}));
-        return () => screen.unkey([':']);
-    }, []);
+    const close = Api.issue.close.useRequest();
+    const reopen = Api.issue.reopen.useRequest();
+
+    useCommandList([
+        state === 'OPEN'
+            ? {row: ['x', 'Close'], message: close, payload: {id}}
+            : {row: ['o', 'Re-open'], message: reopen, payload: {id}},
+        {row: ['e', 'Edit'], view: () => 'Edit', props: {}},
+        {row: ['f', 'Foo'], view: () => 'Edit', props: {}, disabled: true}
+    ]);
 
     const timeline = pipeWith(
         timelineItems.nodes,

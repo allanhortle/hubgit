@@ -8,10 +8,12 @@ import getIn from 'unmutable/getIn';
 import Issue from './data/Issue';
 import IssueListStructure from './IssueListStructure';
 import IssueItemView from './IssueItemView';
+import IssueCreate from './IssueCreate';
 
 import Api from '../core/EntityApi';
 import LoadingBoundary from '../core/LoadingBoundary';
 import {useCoreContext} from '../core/CoreContext';
+import useCommandList from '../util/useCommandList';
 
 type Props = {
     repo: Repo,
@@ -27,6 +29,10 @@ export default (props: Props) => {
         const number = parseInt(row[0]);
         pushStack(IssueItemView, {number, title: `#${number}`});
     };
+
+    useCommandList([
+        {row: ['c', 'Create Issue'], view: IssueCreate, props: {title: 'Create Issue'}}
+    ]);
 
     useEffect(() => {
         issueList.onRequest({owner, name});

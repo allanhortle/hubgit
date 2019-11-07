@@ -1,29 +1,24 @@
 // @flow
 import React, {useEffect} from 'react';
 import Api from '../core/EntityApi';
-import IssueCommandStructure from './IssueCommandStructure';
+import IssueListCommandStructure from './IssueListCommandStructure';
 import {useCoreContext} from '../core/CoreContext';
 import Issue from './data/Issue';
 
 type Props = {
     issue: Issue
 };
-export default function IssueCommandView(props: Props) {
+export default function IssueListCommandView(props: Props) {
     const {issue} = props;
     const {id} = issue;
     const {screen, popStack} = useCoreContext();
 
-    log('asdasd', issue.id);
-
-    const close = Api.issue.close.useRequest();
-    const reopen = Api.issue.reopen.useRequest();
+    const create = Api.issue.create.useRequest();
 
     const actionPop = (action, payload) => () => action.onRequest(payload).then(popStack);
 
     const commands = [
-        {row: ['x', 'Close'], action: actionPop(close, {id})},
-        {row: ['o', 'Re-open'], action: actionPop(reopen, {id})},
-        {row: ['e', 'Edit'], action: popStack}
+        {row: ['c', 'Create Issue'], action: actionPop(close, {id})}
     ];
 
     useEffect(() => {

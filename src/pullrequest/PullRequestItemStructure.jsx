@@ -1,5 +1,5 @@
 // @flow
-import React, {useEffect} from 'react';
+import React from 'react';
 import get from 'unmutable/lib/get';
 import sortBy from 'unmutable/lib/sortBy';
 import pipeWith from 'unmutable/lib/util/pipeWith';
@@ -8,7 +8,8 @@ import Markdown from '../affordance/Markdown';
 import TimelineItemArray from '../affordance/TimelineItemArray';
 import {useCoreContext} from '../core/CoreContext';
 import PullRequest from './data/PullRequest';
-import PullRequestCommandView from './PullRequestCommandView';
+import useCommandList from '../util/useCommandList';
+import Api from '../core/EntityApi';
 
 type Props = {
     pullRequest: PullRequest
@@ -16,6 +17,7 @@ type Props = {
 
 export default function PullItem(props: Props) {
     const {
+        id,
         additions,
         author,
         baseRefName,
@@ -27,15 +29,24 @@ export default function PullItem(props: Props) {
         state,
         url
     } = props.pullRequest;
-    const {pushStack, screen} = useCoreContext();
+    const {pushStack} = useCoreContext();
 
-    useEffect(() => {
-        screen.onceKey([':'], () => pushStack(
-            PullRequestCommandView,
-            {title: 'Commands', pullRequest: props.pullRequest}
-        ));
-        return () => screen.unkey([':']);
-    }, []);
+    const close = Api.pullRequest.close.useRequest();
+    const reopen = Api.pullRequest.reopen.useRequest();
+    const merge = Api.pullRequest.merge.useRequest();
+
+    useCommandList([
+        {row: ['m', 'Merge'], message: merge, payload: {id}},
+        {row: ['x', 'Close'], message: close, payload: {id}},
+        {row: ['o', 'Re-open'], message: reopen, payload: {id}},
+
+        {row: ['a', 'Review - Approve'], disabled: true},
+        {row: ['r', 'Review - Request changes'], disabled: true},
+        {row: ['C', 'Review - Comment'], disabled: true},
+        {row: ['c', 'Comment'], disabled: true},
+        {row: ['s', 'Merge - Squash'], disabled: true},
+        {row: ['R', 'Merge - Rebase'], disabled: true},
+    ]);
 
     const description = body ? 'Description: ' + body.replace(/\n|\r/g, ' ') : 'No Description';
 

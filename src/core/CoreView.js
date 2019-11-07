@@ -25,7 +25,6 @@ import IssueItemView from '../issue/IssueItemView';
 
 type Props = {};
 
-
 function content(repo): StackItem {
     const {view, viewIndex} = repo;
     const item = (component, props): StackItem => ({component, props: {repo, ...props}});
