@@ -3,6 +3,7 @@ import React from 'react';
 import map from 'unmutable/map';
 import pipeWith from 'unmutable/pipeWith';
 import toArray from 'unmutable/toArray';
+import del from 'unmutable/delete';
 
 type Props = {
     onSubmit: (mixed) => void,
@@ -20,6 +21,7 @@ type BlessedNode = {
     value: mixed,
     name: string,
     type: string,
+    options: {data: mixed},
     children: Array<BlessedNode>
 };
 
@@ -43,13 +45,14 @@ export default class Form extends React.Component<Props> {
                 }
             })(props.items);
 
-            const gather = ({name, value, children}) => {
-                log(name, value);
-                if(value != null) {
+            const gather = ({type, name, value, children, options}) => {
+                if(value != null && name !== '__submitButton__') {
                     switch (type) {
                         case 'radio':
                         case 'checkbox':
-                            out[name].push(value);
+                            if(value === true) {
+                                out[name].push(options.data);
+                            }
                             break;
 
                         default:
@@ -68,22 +71,17 @@ export default class Form extends React.Component<Props> {
         let position = 0;
         return <form
             ref={(ref) => this.form = ref}
-            keys
-            vi
-            focused
+            keys vi focused tags
             onSubmit={this.submit}
-            left="5%"
-            top="5%"
-            width="90%"
-            height="90%"
-            border={{type: 'line'}}
-            style={{bg: 'cyan', border: {fg: 'blue'}}}
             children={pipeWith(
                 this.props.items,
                 map(({type, label, items = []}, name, index) => {
                     const childProps = {
                         name,
                         label,
+                        left: 1,
+                        right: 1,
+                        tags: true,
                         keys: true,
                         mouse: true,
                         inputOnFocus: true
@@ -104,10 +102,11 @@ export default class Form extends React.Component<Props> {
                         case 'radio': {
                             return reposition('box', {
                                 height: items.length + 2,
-                                children: items.map((ii, index) => {
+                                children: items.map(({value, label}, index) => {
+                                    const sansLabel = del('label')(childProps);
                                     return type === 'checkbox'
-                                        ? <checkbox key={index} {...childProps} top={index} />
-                                        : <radio key={index} {...childProps} top={index} />;
+                                        ? <checkbox key={index} {...sansLabel} top={index} text={label} data={value} />
+                                        : <radio key={index} {...sansLabel} top={index} text={label} data={value} />;
                                 })
                             });
                         }
@@ -117,6 +116,7 @@ export default class Form extends React.Component<Props> {
                 }),
                 toArray(),
                 _ => _.concat(<button key="button" keys vi mouse
+                    name="__submitButton__"
                     style={{fg: 'blue', focus: {underline: true}}}
                     height={1} bottom={1} right={1}
                     shrink

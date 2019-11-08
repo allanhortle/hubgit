@@ -102,12 +102,12 @@ export default function PullRequestCreate(props: Props) {
                                 labels: {
                                     type: 'checkbox',
                                     label: 'Labels',
-                                    items: labels.map(label)
+                                    items: labels.map(ii => ({label: label(ii), value: ii.id}))
                                 },
                                 assignees: {
                                     type: 'checkbox',
                                     label: 'Users',
-                                    items: users.map(get('login'))
+                                    items: users.map(({login}) => ({label: login, value: login}))
                                 }
                             }}
                         />;
