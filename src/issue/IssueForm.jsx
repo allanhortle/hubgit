@@ -8,12 +8,20 @@ import IssueListView from './IssueListView';
 import {useCoreContext} from '../core/CoreContext';
 import {label} from '../util/tag';
 import Form from '../affordance/Form';
+import Issue from './data/Issue';
 
-export default function PullRequestCreate() {
+type Props = {
+    issue?: Issue
+};
+export default function IssueForm(props: Props) {
     const {replaceStack, repo: {owner, name}} = useCoreContext();
+    const {issue} = props;
+    const mutation = issue ? 'update' : 'create';
+    const buttonText = issue ? 'Save Issue' : 'Create Issue';
+
 
     const repository = Api.repo.item.useRequest();
-    const create = Api.issue.create.useRequest();
+    const message = Api.issue[mutation].useRequest();
 
     useEffect(() => {
         repository.onRequest({owner, name});
@@ -28,18 +36,18 @@ export default function PullRequestCreate() {
                         ...data,
                         repositoryId: repository.id
                     };
-                    create
+                    message
                         .onRequest({input})
                         .then(() => {
-                            if(create.requestState.isSuccess) {
+                            if(message.requestState.isSuccess) {
                                 replaceStack(IssueListView);
                             }
                         });
                 };
 
-                return create.requestState
+                return message.requestState
                     .emptyMap(() => <Form
-                        submit="Create Issue"
+                        submit={buttonText}
                         onSubmit={onSubmit}
                         items={{
                             title: {
@@ -53,18 +61,18 @@ export default function PullRequestCreate() {
                             labelIds: {
                                 type: 'checkbox',
                                 label: 'Labels',
-                                items: repository.labels.nodes.map(ii => ({label: label(ii), value: ii.id}))
+                                options: repository.labels.nodes.map(ii => ({label: label(ii), value: ii.id}))
                             },
                             assigneeIds: {
                                 type: 'checkbox',
                                 label: 'Users',
-                                items: repository.assignableUsers.nodes.map(({login, id}) => ({label: login, value: id}))
+                                options: repository.assignableUsers.nodes.map(({login, id}) => ({label: login, value: id}))
                             }
                         }}
                     />)
                     .fetchingMap(() => 'Loading...')
                     .refetchingMap(() => 'Loading...')
-                    .errorMap(() => create.requestError.message)
+                    .errorMap(() => message.requestError.message)
                     .value();
             }
         )}

@@ -45,7 +45,7 @@ export default function PullItem(props: Props) {
         {row: ['C', 'Review - Comment'], disabled: true},
         {row: ['c', 'Comment'], disabled: true},
         {row: ['s', 'Merge - Squash'], disabled: true},
-        {row: ['R', 'Merge - Rebase'], disabled: true},
+        {row: ['R', 'Merge - Rebase'], disabled: true}
     ]);
 
     const description = body ? 'Description: ' + body.replace(/\n|\r/g, ' ') : 'No Description';

@@ -10,7 +10,7 @@ type Props = {
     items: {
         [name: string]: {
             label: string,
-            items?: Array<mixed>,
+            options?: Array<mixed>,
             type: 'textbox'|'textarea'|'radio'|'checkbox'
         }
     }
@@ -64,18 +64,21 @@ export default class Form extends React.Component<Props> {
             };
             this.form.children.forEach(gather);
             this.props.onSubmit(out);
-        }
+        };
     }
 
     render() {
         let position = 0;
         return <form
-            ref={(ref) => this.form = ref}
+            ref={(ref) => {
+                // $FlowFixMe - Silly ref errors not worth fixing
+                this.form = ref;
+            }}
             keys vi focused tags
             onSubmit={this.submit}
             children={pipeWith(
                 this.props.items,
-                map(({type, label, items = []}, name, index) => {
+                map(({type, label, options = []}, name, index) => {
                     const childProps = {
                         name,
                         label,
@@ -101,8 +104,8 @@ export default class Form extends React.Component<Props> {
                         case 'checkbox':
                         case 'radio': {
                             return reposition('box', {
-                                height: items.length + 2,
-                                children: items.map(({value, label}, index) => {
+                                height: options.length + 2,
+                                children: options.map(({value, label}, index) => {
                                     const sansLabel = del('label')(childProps);
                                     return type === 'checkbox'
                                         ? <checkbox key={index} {...sansLabel} top={index} text={label} data={value} />

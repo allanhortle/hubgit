@@ -1,12 +1,13 @@
 // @flow
+import type {ListTableRow} from '../affordance/ListTable';
+
 import React from 'react';
 import Issue from './data/Issue';
 import ListTable from '../affordance/ListTable';
-import {ellipsis} from '../util/tag';
 
 type Props = {
     issueList: Array<Issue>,
-    onSelect: (Array<string|{+tag: string, +value: mixed}>, number) => void
+    onSelect: (ListTableRow, number) => void
 };
 export default (props: Props) => {
     const {issueList, onSelect} = props;
@@ -15,9 +16,9 @@ export default (props: Props) => {
             onSelect={onSelect}
             head={['#', 'State', 'Titles', 'Labels', 'Last Updated']}
             rows={issueList.map(ii => [
-                `${ii.number}`,
+                {value: `${ii.number}`},
                 {tag: 'state', value: ii.state},
-                ellipsis(ii.title, 50),
+                {value: ii.title, ellipsis: 50},
                 {tag: 'label', value: ii.labels.nodes},
                 {tag: 'date', value: ii.updatedAt}
             ])}

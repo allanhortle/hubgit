@@ -2,7 +2,6 @@
 import type {ComponentType} from 'react';
 import update from 'unmutable/update';
 
-// $FlowFixMe
 export type StackItemProps = any;
 
 export type StackItem = {

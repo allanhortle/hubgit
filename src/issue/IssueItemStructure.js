@@ -1,6 +1,7 @@
 // @flow
-import React, {useEffect} from 'react';
+import React  from 'react';
 import Issue from './data/Issue';
+import IssueForm from './IssueForm';
 import ListTable from '../affordance/ListTable';
 import Markdown from '../affordance/Markdown';
 import TimelineItemArray from '../affordance/TimelineItemArray';
@@ -35,8 +36,7 @@ export default (props: Props) => {
         state === 'OPEN'
             ? {row: ['x', 'Close'], message: close, payload: {id}}
             : {row: ['o', 'Re-open'], message: reopen, payload: {id}},
-        {row: ['e', 'Edit'], view: () => 'Edit', props: {}},
-        {row: ['f', 'Foo'], view: () => 'Edit', props: {}, disabled: true}
+        {row: ['e', 'Edit'], view: IssueForm, props: {issue: issueItem}}
     ]);
 
     const timeline = pipeWith(
@@ -60,7 +60,7 @@ export default (props: Props) => {
         <ListTable
             top={labels ? 3 : 2}
             head={['', '', '', '']}
-            rows={timeline.map(_ => _.row)}
+            rows={timeline.map(_ => ({value: _.row}))}
             onSelect={(_, index) =>  {
                 const {view, viewProps} = timeline[index - 1];
                 pushStack(view, viewProps);

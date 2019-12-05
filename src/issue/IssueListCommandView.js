@@ -1,7 +1,6 @@
 // @flow
-import React, {useEffect} from 'react';
+import {useEffect} from 'react';
 import Api from '../core/EntityApi';
-import IssueListCommandStructure from './IssueListCommandStructure';
 import {useCoreContext} from '../core/CoreContext';
 import Issue from './data/Issue';
 
@@ -18,7 +17,7 @@ export default function IssueListCommandView(props: Props) {
     const actionPop = (action, payload) => () => action.onRequest(payload).then(popStack);
 
     const commands = [
-        {row: ['c', 'Create Issue'], action: actionPop(close, {id})}
+        {row: ['c', 'Create Issue'], action: actionPop(create, {id})}
     ];
 
     useEffect(() => {
@@ -26,14 +25,7 @@ export default function IssueListCommandView(props: Props) {
         () => commands.forEach(({row, action}) => screen.unkey([row[0]], action));
     }, []);
 
-    return close.requestState
-        .emptyFlatMap(() => reopen.requestState)
-        .emptyMap(() => {
-            return <IssueCommandStructure
-                issue={issue}
-                commands={commands}
-            />;
-        })
+    return create.requestState
         .fetchingMap(() => 'Loading...')
         .refetchingMap(() => 'Loading...')
         .errorMap(() => 'Error!')

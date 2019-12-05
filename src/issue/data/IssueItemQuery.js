@@ -13,6 +13,10 @@ query ($owner: String!, $name: String!, $number: Int!) {
         updatedAt
         url
         author {login}
+        assignees { nodes {
+            id
+            login
+        }}
         timelineItems(last: 100) { nodes {
             __typename
             ${TimelineItemsPartial([
@@ -26,6 +30,7 @@ query ($owner: String!, $name: String!, $number: Int!) {
     ])}
         }}
         labels(first: 10) { nodes {
+            id
             color
             name
         }}

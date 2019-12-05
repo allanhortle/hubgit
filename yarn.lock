@@ -2478,12 +2478,14 @@ entities@^2.0.0:
 enty-state@^1.0.0-alpha.7:
   version "1.0.0-alpha.7"
   resolved "https://registry.yarnpkg.com/enty-state/-/enty-state-1.0.0-alpha.7.tgz#41551bd52a9a3a1f9036273be9feb5af19ea7019"
+  integrity sha512-eZCUjEubLn+DIdkVOKGUDYsVogQseg5a4zq+Ietr5QQOsJM6wR68JOunOG3amPW6NkJJIcdaLP4t1KC/BPSsLQ==
   dependencies:
     unmutable "^0.46.0"
 
 enty@^1.0.0-alpha.7:
   version "1.0.0-alpha.7"
   resolved "https://registry.yarnpkg.com/enty/-/enty-1.0.0-alpha.7.tgz#ba3d20a64e1206b902dca7edf87ea64a13185b0e"
+  integrity sha512-buWk6YtVmCUtUe4oyL7ZNj+SchkFbBQRyxZfHkFaygaMG/xvp/3fEYhck5IRxdmLRc/U1cAFc5fZrUh1X4Z11A==
   dependencies:
     unmutable "^0.46.0"
 
@@ -5770,6 +5772,7 @@ react-dom@^16.9.0:
 react-enty@^1.0.0-alpha.7:
   version "1.0.0-alpha.7"
   resolved "https://registry.yarnpkg.com/react-enty/-/react-enty-1.0.0-alpha.7.tgz#1be9d9ce052373f66f5d8fd6439b7bcc6b6dd144"
+  integrity sha512-bP9OsyrTlQytFOL5rsaGJ4ithny7hu8yeebMiSB9Sx/xoOF1pZVxZcL71EKvbqpjZf34xlqM2iYFtWFmLQYI+g==
   dependencies:
     enty "^1.0.0-alpha.7"
     enty-state "^1.0.0-alpha.7"

@@ -3,7 +3,11 @@ import React from 'react';
 import map from 'unmutable/map';
 import * as t from '../util/tag';
 
-export type ListTableColumn = string|{+tag: string, +value: mixed};
+export type ListTableColumn = {
+    value: mixed,
+    tag?: string,
+    ellipsis?: number
+};
 export type ListTableRow = Array<ListTableColumn>;
 
 type Props = {

@@ -18,6 +18,7 @@ import MergePullRequestMutation from '../pullrequest/data/MergePullRequestMutati
 import IssueQuery from '../issue/data/IssueItemQuery';
 import IssueListQuery from '../issue/data/IssueListQuery';
 import IssueCreateMutation from '../issue/data/IssueCreateMutation';
+import IssueUpdateMutation from '../issue/data/IssueUpdateMutation';
 import ReopenIssueMutation from '../issue/data/ReopenIssueMutation';
 import CloseIssueMutation from '../issue/data/CloseIssueMutation';
 
@@ -78,6 +79,7 @@ const straightQueries = [
     ['issue.item', IssueQuery],
     ['issue.list', IssueListQuery],
     ['issue.create', IssueCreateMutation],
+    ['issue.update', IssueUpdateMutation],
     ['issue.close', CloseIssueMutation],
     ['issue.reopen', ReopenIssueMutation],
 
