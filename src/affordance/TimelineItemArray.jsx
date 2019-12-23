@@ -2,7 +2,8 @@
 import type {ComponentType} from 'react';
 import getIn from 'unmutable/lib/getIn';
 import pipeWith from 'unmutable/lib/util/pipeWith';
-import {blue, label, red, green, magenta, grey, yellow, date, cyan} from '../util/tag';
+import {maybePipe} from 'unfunctional';
+import {check, blue, label, red, green, magenta, grey, yellow, date, cyan} from '../util/tag';
 import flatMap from 'unmutable/flatMap';
 import Markdown from './Markdown';
 
@@ -61,11 +62,11 @@ function Item(item) {
         // Git
         //
         case 'PullRequestCommit': {
-            const {id, message, abbreviatedOid, oid} = item.commit;
+            const {id, message, abbreviatedOid, oid, checkSuites} = item.commit;
             return [row({
                 time: ['commit', 'authoredDate'],
                 actor: ['commit', 'author', 'user', 'login'],
-                icon: grey('*'),
+                icon: maybePipe(getIn(['nodes', 0]), check)(checkSuites) || grey('*'),
                 message: grey(message),
                 view: CommitItemView,
                 viewProps: {id, title: `Commit: ${abbreviatedOid}`, oid}
@@ -184,22 +185,22 @@ function Item(item) {
         }
         case 'MergedEvent': {
             return [row({
-                icon: magenta('<'),
+                icon: magenta('☇'),
                 message: magenta(`merged ${item.commit.abbreviatedOid} into ${item.mergeRefName}`)
             })];
         }
         case 'ClosedEvent': {
             return [row({
                 color: red,
-                icon: '×',
-                message: `Closed the pull request`
+                icon: '☇',
+                message: `Closed`
             })];
         }
         case 'ReopenedEvent': {
             return [row({
                 color: green,
-                icon: '•',
-                message: `Reopened the pull request`
+                icon: '☇',
+                message: `Reopened`
             })];
         }
         case 'CrossReferencedEvent': {

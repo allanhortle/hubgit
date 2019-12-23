@@ -1,16 +1,18 @@
 // @flow
+import type {ConnectionShape as Connection} from '../../core/data/Connection';
+
 type IssueShape = {
+    author: {login: string},
+    body: string,
+    createdAt: string,
+    id: string,
+    labels: Connection<{name: string, color: string}>,
     name: string,
     number: number,
     state: string,
+    timelineItems: Connection<{}>,
     title: string,
-    updatedAt: string,
-    timelineItems: {
-        nodes: Array<{}>
-    },
-    labels: {
-        nodes: Array<{name: string, color: string}>
-    }
+    updatedAt: string
 };
 
 export default class Issue {
@@ -20,7 +22,11 @@ export default class Issue {
     }
 
     // getters
+    get author() { return this._data.author; }
+    get body() { return this._data.body; }
+    get createdAt() { return this._data.createdAt; }
     get labels() { return this._data.labels; }
+    get id() { return this._data.id; }
     get name() { return this._data.name; }
     get number() { return this._data.number; }
     get state() { return this._data.state; }

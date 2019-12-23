@@ -4,6 +4,7 @@ id
 createdAt
 `;
 import TimelineItemsPartial from '../../core/data/TimelineItemsPartial';
+
 export default `
     ${idDate}
     additions
@@ -48,6 +49,6 @@ export default `
         'ReviewRequestedEvent',
         'ReadyForReviewEvent',
         'PullRequestRevisionMarker'
-        ])}
+    ])}
     }}
 `;

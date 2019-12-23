@@ -59,5 +59,5 @@ export default function CommitItemStructure(props: Props) {
             invertSelected={false}
             height={rows.length + 1}
         />
-    </box>
+    </box>;
 }

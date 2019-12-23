@@ -6,7 +6,7 @@ import {createContext, useContext} from 'react';
 import Stack from './data/Stack';
 import Ref from '../ref/data/Ref';
 
-type KeyHandler = (Array<string>, () => void) => void;
+type KeyHandler = (Array<string>, ?() => void) => void;
 
 export type CoreContextType = {
     popStack: () => void,

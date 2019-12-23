@@ -1,7 +1,9 @@
 // @flow
+import type {ConnectionShape as Connection} from '../../core/data/Connection';
 import {pipe, pipeWith} from 'unfunctional';
 import update from 'unmutable/update';
 import updateIn from 'unmutable/updateIn';
+import Commit from '../../commit/data/Commit';
 
 type PullRequestShape = {
     additions: number,
@@ -16,19 +18,14 @@ type PullRequestShape = {
     pullRequestReviewThreadMap: {
         [string]: {id: string}
     },
-    reviewThreads: {
-        nodes: Array<{
-            comments: {
-                nodes: Array<{
-                    pullRequestReview: {id: string}
-                }>
-            }
+    commits: Connection<Commit>,
+    reviewThreads: Connection<{
+        comments: Connection<{
+            pullRequestReview: {id: string}
         }>
-    },
+    }>,
     state: string,
-    timelineItems: {
-        nodes: Array<{}>
-    },
+    timelineItems: Connection<{}>,
     title: string,
     updatedAt: string,
     url: string
@@ -89,6 +86,9 @@ export default class PullRequest {
     }
     get body() {
         return this._data.body;
+    }
+    get commits() {
+        return this._data.commits;
     }
     get createdAt() {
         return this._data.createdAt;

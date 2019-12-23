@@ -1,11 +1,13 @@
 // @flow
 import React, {useEffect, useState} from 'react';
+import {maybePipe} from 'unfunctional';
 import LoadingBoundary from '../core/LoadingBoundary';
 import Api from '../core/EntityApi';
 import pipeWith from 'unmutable/pipeWith';
 import map from 'unmutable/map';
+import getIn from 'unmutable/getIn';
 import PullrequestItem from './PullrequestItem';
-import {yellow, date, ellipsis, state as colorState} from '../util/tag';
+import {check, yellow, date, ellipsis, state as colorState} from '../util/tag';
 import {useCoreContext} from '../core/CoreContext';
 
 export default function PullList() {
@@ -51,7 +53,7 @@ export default function PullList() {
                             date(ii.updatedAt),
                             yellow(ii.author.login),
                             ellipsis(ii.headRefName, 30),
-                            colorState(ii.state),
+                            `${maybePipe(getIn(['commits', 'nodes', 0, 'commit', 'checkSuites', 'nodes', 0]), check)(ii) || ' '} ${colorState(ii.state)}`,
                             ellipsis(ii.title, 40),
                             `${ii.comments.totalCount + ii.reviewThreads.nodes.reduce((rr, item) => rr + item.comments.totalCount, 0)}`,
                             ii.timelineItems.totalCount.toString()

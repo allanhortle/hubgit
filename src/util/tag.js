@@ -14,7 +14,7 @@ const colors = [
     'cyan',
     'white'
 ].reduce((rr, color) => {
-    rr[color] = (content: string) => `{${color}-fg}${content}{/${color}-fg}`;
+    rr[color] = (content: string, escape?: boolean) => `{${color}-fg}${escape ? blessed.escape(content) : content}{/${color}-fg}`;
     rr[`${color}Bg`] = (content: string, escape?: boolean) => `{${color}-bg}${escape ? blessed.escape(content) : content}{/${color}-bg}`;
     return rr;
 }, {});
@@ -75,13 +75,36 @@ export function state(val: string) {
     }
 }
 
+export function check({status, conclusion}: {status: string, conclusion: string}): string {
+    if(status !== 'COMPLETED') {
+        return yellow('•');
+    }
+
+    switch (conclusion) {
+        case 'SUCCESS':
+            return green('✔');
+
+        case 'NEUTRAL':
+            return grey('-');
+
+        case 'ACTION_REQUIRED':
+        case 'CANCELLED':
+        case 'FAILURE':
+        case 'TIMED_OUT':
+        default:
+            return red('×');
+    }
+}
+
+
+
 export function changes(props: {additions: number, deletions: number}): string {
     return `${green('+' + props.additions)} ${red('-' + props.deletions)}`;
 }
 
 type DiffProps = {
     highlightLine?: number,
-    window?: [number, numer]
+    window?: [number, number]
 };
 export function diff(text: string, props?: DiffProps = {}): string {
     let textArray = text

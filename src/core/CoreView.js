@@ -25,7 +25,6 @@ import IssueItemView from '../issue/IssueItemView';
 
 type Props = {};
 
-
 function content(repo): StackItem {
     const {view, viewIndex} = repo;
     const item = (component, props): StackItem => ({component, props: {repo, ...props}});
@@ -61,9 +60,8 @@ export default pipe(
                     }
                     popStack();
                 });
-                CoreScreen.key(['p'], () => {
-                    pushStack(PullrequestList, {repo, title: 'Pull Requests'});
-                });
+                CoreScreen.key(['p'], () => pushStack(PullrequestList, {title: 'Pull Requests'}));
+                CoreScreen.key(['i'], () => pushStack(IssueListView, {title: 'Issues'}));
 
                 this.state = {
                     stack: new Stack([content(repo)]),

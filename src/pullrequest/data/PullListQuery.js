@@ -18,6 +18,15 @@ query ($owner: String!, $name: String!) {
           comments {
             totalCount
           }
+          commits(last: 1) { nodes {
+            commit {
+              oid
+              checkSuites(last: 20) { nodes {
+                status
+                conclusion
+              }}
+            }
+          }}
           reviewThreads(first: 100) {
             totalCount
             nodes {

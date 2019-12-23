@@ -7,7 +7,7 @@ import map from 'unmutable/map';
 import pipeWith from 'unmutable/pipeWith';
 import toArray from 'unmutable/toArray';
 import groupBy from 'unmutable/groupBy';
-import {red, green, magenta, grey, yellow, date, diff} from '../util/tag';
+import {red, grey, yellow, date, diff} from '../util/tag';
 import PullRequest from './data/PullRequest';
 
 type Props = {
